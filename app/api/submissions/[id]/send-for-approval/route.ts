@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { createAuthCode } from '@/lib/auth'
-import { notifyTeamLeader, getBaseUrlFromRequest } from '@/lib/resend'
+import { notifyTeamLeader } from '@/lib/resend'
 import { SubmissionStatus } from '@prisma/client'
 import { isBot } from '@/lib/security'
 
@@ -42,8 +42,7 @@ export async function POST(
     // Create auth code for team leader
     const leaderEmail = process.env.TEAM_LEADER_EMAIL!
     const code = await createAuthCode(leaderEmail, 'leader', params.id)
-    const baseUrl = getBaseUrlFromRequest(request)
-    await notifyTeamLeader(params.id, code, baseUrl)
+    await notifyTeamLeader(params.id, code)
 
     return NextResponse.json({ success: true })
   } catch (error) {

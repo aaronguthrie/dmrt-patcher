@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { notifyProPostApproved, notifyProPostRejected, getBaseUrlFromRequest } from '@/lib/resend'
+import { notifyProPostApproved, notifyProPostRejected } from '@/lib/resend'
 import { isBot } from '@/lib/security'
 
 export async function POST(
@@ -32,7 +32,6 @@ export async function POST(
       },
     })
 
-    const baseUrl = getBaseUrlFromRequest(request)
     if (approved) {
       // Update status and notify PRO
       await prisma.submission.update({
@@ -41,7 +40,7 @@ export async function POST(
           status: 'awaiting_pro_to_post',
         },
       })
-      await notifyProPostApproved(params.id, baseUrl)
+      await notifyProPostApproved(params.id)
     } else {
       // Reject and notify PRO
       await prisma.submission.update({
@@ -50,7 +49,7 @@ export async function POST(
           status: 'rejected',
         },
       })
-      await notifyProPostRejected(params.id, comment || '', baseUrl)
+      await notifyProPostRejected(params.id, comment || '')
     }
 
     return NextResponse.json({ success: true })
