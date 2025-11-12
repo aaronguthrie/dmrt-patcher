@@ -1,16 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Sparkles, Mail, FileText, Image as ImageIcon, Wand2, Send, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { LoginForm } from '@/components/login-form'
-import Image from 'next/image'
+import { Sparkles, Wand2, Image as ImageIcon, Send, Loader2, X, Mail } from 'lucide-react'
 
 interface Submission {
   id: string
@@ -233,88 +224,135 @@ export default function HomePage() {
 
   if (!authenticated) {
     return (
-      <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-        <div className="flex w-full max-w-sm flex-col gap-6">
-          <LoginForm
-            email={email}
-            setEmail={setEmail}
-            loading={loading}
-            error={error}
-            success={success}
-            onSubmit={sendLoginLink}
-          />
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card w-full max-w-md">
+          <div className="text-center mb-6">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
+              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Social Media</h1>
+            </div>
+            <p className="text-gray-600">Enter your email to receive a login link</p>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  id="email"
+                  type="email"
+                  className="input pl-10"
+                  placeholder="your.email@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendLoginLink()}
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200">
+                {success}
+              </div>
+            )}
+
+            <button
+              className="btn btn-primary w-full"
+              onClick={sendLoginLink}
+              disabled={loading || !email}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Mail className="inline-block mr-2 h-4 w-4" />
+                  Send Login Link
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50/50">
-      <div className="container mx-auto py-8 px-4 max-w-4xl">
-        <div className="mb-8 text-center">
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-              DMRT Postal Service
-            </h1>
+            <h1 className="text-4xl font-bold text-gradient-purple">DMRT Social Media</h1>
           </div>
-          <p className="text-muted-foreground">Transform your notes into polished social media posts</p>
+          <p className="text-gray-600">Transform your notes into polished social media posts</p>
         </div>
 
         {!submission ? (
-          <Card className="shadow-xl border-purple-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-purple-600" />
-                Submit Notes
-              </CardTitle>
-              <CardDescription>
+          <div className="card">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Submit Notes</h2>
+              <p className="text-gray-600">
                 Enter your incident or training notes below. Our AI will transform them into a professional social media post.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+                  Notes
+                </label>
+                <textarea
                   id="notes"
+                  className="textarea min-h-[200px]"
                   placeholder="Enter your incident or training notes here..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="min-h-[200px] resize-none"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Photos (optional)</Label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Photos (optional)
+                </label>
                 <div
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                   className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors cursor-pointer bg-purple-50/50"
                 >
                   <ImageIcon className="h-12 w-12 mx-auto mb-4 text-purple-600" />
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Drag and drop photos here, or
-                  </p>
-                  <Input
+                  <p className="text-sm text-gray-600 mb-2">Drag and drop photos here, or</p>
+                  <input
+                    id="photos"
                     type="file"
                     multiple
                     accept="image/*"
                     onChange={handlePhotoChange}
-                    className="max-w-xs mx-auto"
+                    className="max-w-xs mx-auto text-sm"
                   />
                 </div>
               </div>
 
               {photoPreviews.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="photo-grid">
                   {photoPreviews.map((preview, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-purple-200">
+                    <div key={index} className="photo-item">
                       <img src={preview} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" />
                       <button
+                        className="photo-remove"
                         onClick={() => removePhoto(index)}
-                        className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
                       >
-                        ×
+                        <X className="h-4 w-4" />
                       </button>
                     </div>
                   ))}
@@ -322,142 +360,132 @@ export default function HomePage() {
               )}
 
               {error && (
-                <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200">
                   {error}
                 </div>
               )}
               {success && (
-                <div className="p-3 rounded-md bg-green-50 text-green-700 text-sm">
+                <div className="p-4 rounded-lg bg-green-50 text-green-700 border border-green-200">
                   {success}
                 </div>
               )}
 
-              <Button
+              <button
+                className="btn btn-ai w-full text-lg"
                 onClick={submitNotes}
                 disabled={loading || !notes.trim()}
-                className="w-full bg-purple-600 hover:bg-purple-700"
-                size="lg"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="inline-block mr-2 h-5 w-5 animate-spin" />
                     Generating Post...
                   </>
                 ) : (
                   <>
-                    <Wand2 className="mr-2 h-4 w-4" />
+                    <Wand2 className="inline-block mr-2 h-5 w-5" />
                     Generate Post with AI
                   </>
                 )}
-              </Button>
-            </CardContent>
-          </Card>
+              </button>
+            </div>
+          </div>
         ) : (
           <div className="space-y-6">
-            <Card className="shadow-xl border-purple-200">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-purple-600 animate-sparkle" />
-                    AI-Generated Post
-                  </CardTitle>
-                  <Badge variant="secondary" className="bg-purple-100 text-purple-700">
-                    Ready for Review
-                  </Badge>
+            <div className="card card-ai">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-purple-600 animate-sparkle" />
+                  <h2 className="text-2xl font-semibold text-gray-900">AI-Generated Post</h2>
                 </div>
-                <CardDescription>
-                  Review the generated post below. You can provide feedback to refine it.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-lg border border-purple-200">
-                  <pre className="whitespace-pre-wrap text-sm leading-relaxed font-medium">
-                    {submission.finalPostText}
-                  </pre>
-                </div>
+                <span className="badge badge-purple">Ready for Review</span>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Review the generated post below. You can provide feedback to refine it.
+              </p>
 
-                {submission.photoPaths.length > 0 && (
-                  <div>
-                    <Label className="mb-2 block">Photos</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {submission.photoPaths.map((path, index) => (
-                        <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-purple-200">
-                          <img src={path} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                        </div>
-                      ))}
-                    </div>
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-lg border border-purple-200 mb-6">
+                <pre className="whitespace-pre-wrap text-sm leading-relaxed font-medium text-gray-900">
+                  {submission.finalPostText}
+                </pre>
+              </div>
+
+              {submission.photoPaths.length > 0 && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Photos</label>
+                  <div className="photo-grid">
+                    {submission.photoPaths.map((path, index) => (
+                      <div key={index} className="photo-item">
+                        <img src={path} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
                   </div>
-                )}
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <Label htmlFor="feedback">
-                    Feedback (optional)
-                    <span className="text-muted-foreground text-xs ml-2">
-                      e.g., &quot;soften tone&quot;, &quot;add weather details&quot;
-                    </span>
-                  </Label>
-                  <Textarea
-                    id="feedback"
-                    placeholder="Enter feedback to improve the post..."
-                    value={feedback}
-                    onChange={(e) => setFeedback(e.target.value)}
-                    className="min-h-[100px] resize-none"
-                  />
                 </div>
+              )}
 
-                {error && (
-                  <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
-                    {error}
-                  </div>
-                )}
-                {success && (
-                  <div className="p-3 rounded-md bg-green-50 text-green-700 text-sm">
-                    {success}
-                  </div>
-                )}
+              <div className="border-t border-purple-200 pt-6">
+                <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-2">
+                  Feedback (optional)
+                  <span className="text-gray-500 text-xs ml-2">
+                    e.g., &quot;soften tone&quot;, &quot;add weather details&quot;
+                  </span>
+                </label>
+                <textarea
+                  id="feedback"
+                  className="textarea min-h-[100px]"
+                  placeholder="Enter feedback to improve the post..."
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                />
+              </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    onClick={regeneratePost}
-                    disabled={regenerating}
-                    variant="outline"
-                    className="flex-1 border-purple-300 hover:bg-purple-50"
-                  >
-                    {regenerating ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Regenerating...
-                      </>
-                    ) : (
-                      <>
-                        <Wand2 className="mr-2 h-4 w-4" />
-                        Regenerate
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    onClick={markAsReady}
-                    disabled={loading}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700"
-                    size="lg"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="mr-2 h-4 w-4" />
-                        Post is Ready
-                      </>
-                    )}
-                  </Button>
+              {error && (
+                <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200">
+                  {error}
                 </div>
-              </CardContent>
-            </Card>
+              )}
+              {success && (
+                <div className="p-4 rounded-lg bg-green-50 text-green-700 border border-green-200">
+                  {success}
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  className="btn btn-primary flex-1"
+                  onClick={regeneratePost}
+                  disabled={regenerating}
+                >
+                  {regenerating ? (
+                    <>
+                      <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                      Regenerating...
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="inline-block mr-2 h-4 w-4" />
+                      Regenerate
+                    </>
+                  )}
+                </button>
+                <button
+                  className="btn btn-secondary flex-1"
+                  onClick={markAsReady}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="inline-block mr-2 h-4 w-4" />
+                      Post is Ready
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

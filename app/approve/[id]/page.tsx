@@ -30,7 +30,6 @@ function ApprovePageContent() {
     if (authenticated && submissionId) {
       loadSubmission()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated, submissionId])
 
   const validateCode = async (code: string) => {

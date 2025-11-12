@@ -3,7 +3,7 @@ import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'DMRT Postal Service',
+  title: 'DMRT Social Media',
   description: 'Donegal Mountain Rescue Team Social Media Post Management',
 }
 
@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={GeistSans.className}>{children}</body>
+    <html lang="en" className={GeistSans.variable}>
+      <body className="font-sans">{children}</body>
     </html>
   )
 }
