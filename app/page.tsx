@@ -295,7 +295,7 @@ export default function HomePage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-            <h1 className="text-4xl font-bold text-gradient-purple">DMRT Social Media</h1>
+            <h1 className="text-4xl font-bold text-gradient-purple">DMRT Postal Service</h1>
           </div>
           <p className="text-gray-600">Transform your notes into polished social media posts</p>
         </div>
@@ -314,7 +314,7 @@ export default function HomePage() {
                 </button>
               </div>
               <p className="text-gray-600">
-                Enter your incident or training notes below. Our AI will transform them into a professional social media post.
+                Enter your incident or training notes below—rough drafts are fine. Our AI will turn them into a polished social media post. You can review and edit before it goes to PRO for approval, so don't worry about making it perfect.
               </p>
             </div>
 
