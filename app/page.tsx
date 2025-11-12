@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Sparkles, Mail, FileText, Image as ImageIcon, Wand2, Send, Loader2, CheckCircle2 } from 'lucide-react'
+import { Sparkles, Mail, FileText, Image as ImageIcon, Wand2, Send, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { LoginForm } from '@/components/login-form'
 import Image from 'next/image'
 
 interface Submission {
@@ -232,100 +233,16 @@ export default function HomePage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50/50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <Card className="shadow-xl border-purple-200">
-            <CardHeader className="space-y-6 text-center">
-              <div className="flex items-center justify-center gap-2">
-                <Sparkles className="h-8 w-8 text-purple-600 animate-sparkle" />
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
-                  DMRT Postal Service
-                </CardTitle>
-              </div>
-              <div className="space-y-2">
-                <CardTitle className="text-2xl">Welcome back</CardTitle>
-                <CardDescription className="text-base">
-                  Enter your email to receive a magic link and access your account
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium">
-                  Email Address
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && !loading && email && sendLoginLink()}
-                    className="pl-10 h-11"
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              {error && (
-                <div className="p-3 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-start gap-2">
-                  <span className="font-semibold">Error:</span>
-                  <span>{error}</span>
-                </div>
-              )}
-              
-              {success && (
-                <div className="p-3 rounded-md bg-green-50 border border-green-200 text-green-700 text-sm flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>{success}</span>
-                </div>
-              )}
-
-              <Button
-                onClick={sendLoginLink}
-                disabled={loading || !email}
-                className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base font-medium"
-                size="lg"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Sending magic link...
-                  </>
-                ) : (
-                  <>
-                    <Mail className="mr-2 h-4 w-4" />
-                    Send Magic Link
-                  </>
-                )}
-              </Button>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">
-                    Secure Authentication
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground">
-                  We'll send you a secure link to sign in. No password required.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <div className="mt-6 text-center">
-            <p className="text-xs text-muted-foreground">
-              Protected by DMRT authentication system
-            </p>
-          </div>
+      <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+        <div className="flex w-full max-w-sm flex-col gap-6">
+          <LoginForm
+            email={email}
+            setEmail={setEmail}
+            loading={loading}
+            error={error}
+            success={success}
+            onSubmit={sendLoginLink}
+          />
         </div>
       </div>
     )
