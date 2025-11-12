@@ -217,10 +217,10 @@ export default function HomePage() {
         throw new Error(data.error || 'Failed to mark as ready')
       }
 
-      setSuccess('Post submitted! PRO will review it shortly.')
+      // Redirect to thank you page
+      window.location.href = `/thank-you?id=${submission.id}`
     } catch (err: any) {
       setError(err.message)
-    } finally {
       setLoading(false)
     }
   }
