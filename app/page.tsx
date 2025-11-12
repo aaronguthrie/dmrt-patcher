@@ -408,7 +408,16 @@ export default function HomePage() {
                   <Sparkles className="h-5 w-5 text-purple-600 animate-sparkle" />
                   <h2 className="text-2xl font-semibold text-gray-900">AI-Generated Post</h2>
                 </div>
-                <span className="badge badge-purple">Ready for Review</span>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setShowPromptModal(true)}
+                    className="flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                  >
+                    <Info className="h-3.5 w-3.5" />
+                    View Prompt
+                  </button>
+                  <span className="badge badge-purple">Ready for Review</span>
+                </div>
               </div>
               <p className="text-gray-600 mb-6">
                 Review the generated post below. You can provide feedback to refine it.
