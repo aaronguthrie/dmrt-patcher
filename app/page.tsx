@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Sparkles, Wand2, Image as ImageIcon, Send, Loader2, X, Mail } from 'lucide-react'
+import { Sparkles, Wand2, Image as ImageIcon, Send, Loader2, X, Mail, Info } from 'lucide-react'
+import PromptModal from './components/PromptModal'
 
 interface Submission {
   id: string
@@ -24,6 +25,7 @@ export default function HomePage() {
   const [submission, setSubmission] = useState<Submission | null>(null)
   const [feedback, setFeedback] = useState('')
   const [regenerating, setRegenerating] = useState(false)
+  const [showPromptModal, setShowPromptModal] = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -301,7 +303,16 @@ export default function HomePage() {
         {!submission ? (
           <div className="card">
             <div className="mb-6">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Submit Notes</h2>
+              <div className="flex items-start justify-between mb-2">
+                <h2 className="text-2xl font-semibold text-gray-900">Submit Notes</h2>
+                <button
+                  onClick={() => setShowPromptModal(true)}
+                  className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                >
+                  <Info className="h-4 w-4" />
+                  View AI Prompt
+                </button>
+              </div>
               <p className="text-gray-600">
                 Enter your incident or training notes below. Our AI will transform them into a professional social media post.
               </p>
@@ -489,6 +500,11 @@ export default function HomePage() {
           </div>
         )}
       </div>
+
+      <PromptModal 
+        isOpen={showPromptModal} 
+        onClose={() => setShowPromptModal(false)} 
+      />
     </div>
   )
 }

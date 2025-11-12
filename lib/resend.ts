@@ -32,9 +32,9 @@ export async function sendMagicLink(
   await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: email,
-    subject: 'DMRT Social Media - Your Login Link',
+    subject: 'DMRT Postal Service - Your login link',
     html: `
-      <p>Click the link below to access DMRT Social Media:</p>
+      <p>Click the link below to access DMRT Postal Service to get help putting social media posts together in our brand voice.</p>
       <p><a href="${link}">${link}</a></p>
       <p>This link expires in 4 hours.</p>
     `,

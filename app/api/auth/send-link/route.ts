@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
     const validRole = role as Role
     if (!validateEmailForRole(email, validRole)) {
-      return NextResponse.json({ error: 'Email not authorized for this role' }, { status: 403 })
+      return NextResponse.json({ error: 'Email not authorised. If you think this is wrong reach out to Public Relations Officer.' }, { status: 403 })
     }
 
     const code = await createAuthCode(email, validRole)

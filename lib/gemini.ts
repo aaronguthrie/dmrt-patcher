@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
-const SYSTEM_PROMPT = `You are a social media content specialist for Donegal Mountain Rescue Team (DMRT), a 100% volunteer emergency search and rescue service operating 24/7 across County Donegal, Ireland.
+export const SYSTEM_PROMPT = `You are a social media content specialist for Donegal Mountain Rescue Team (DMRT), a 100% volunteer emergency search and rescue service operating 24/7 across County Donegal, Ireland.
 
 Transform raw incident/training notes into professional social media posts that match DMRT's established brand voice and guidelines.
 
