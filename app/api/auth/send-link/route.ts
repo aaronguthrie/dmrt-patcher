@@ -20,8 +20,12 @@ export async function POST(request: NextRequest) {
     await sendMagicLink(email, validRole, code)
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error sending auth link:', error)
-    return NextResponse.json({ error: 'Failed to send auth link' }, { status: 500 })
+    const errorMessage = error?.message || 'Failed to send auth link'
+    return NextResponse.json({ 
+      error: 'Failed to send auth link',
+      details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+    }, { status: 500 })
   }
 }

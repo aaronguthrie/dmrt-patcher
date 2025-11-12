@@ -1,6 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Sparkles, Mail, FileText, Image as ImageIcon, Wand2, Send, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import Image from 'next/image'
 
 interface Submission {
@@ -26,7 +34,6 @@ export default function HomePage() {
   const [regenerating, setRegenerating] = useState(false)
 
   useEffect(() => {
-    // Check for code in URL
     const params = new URLSearchParams(window.location.search)
     const urlCode = params.get('code')
     if (urlCode) {
@@ -39,7 +46,6 @@ export default function HomePage() {
       const newPhotos = Array.from(e.target.files)
       setPhotos([...photos, ...newPhotos])
       
-      // Create previews
       newPhotos.forEach((file) => {
         const reader = new FileReader()
         reader.onloadend = () => {
@@ -217,7 +223,6 @@ export default function HomePage() {
         throw new Error(data.error || 'Failed to mark as ready')
       }
 
-      // Redirect to thank you page
       window.location.href = `/thank-you?id=${submission.id}`
     } catch (err: any) {
       setError(err.message)
@@ -227,163 +232,280 @@ export default function HomePage() {
 
   if (!authenticated) {
     return (
-      <div className="container">
-        <div className="card">
-          <h1>DMRT Social Media</h1>
-          <p style={{ marginTop: '1rem', marginBottom: '2rem' }}>
-            Enter your email to receive a login link.
-          </p>
-          <input
-            type="email"
-            className="input"
-            placeholder="Your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendLoginLink()}
-          />
-          {error && <div className="error">{error}</div>}
-          {success && <div className="success">{success}</div>}
-          <button
-            className="button"
-            onClick={sendLoginLink}
-            disabled={loading || !email}
-          >
-            {loading ? 'Sending...' : 'Send Login Link'}
-          </button>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50/50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md shadow-xl border-purple-200">
+          <CardHeader className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles className="h-8 w-8 text-purple-600 animate-sparkle" />
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
+                DMRT Postal Service
+              </CardTitle>
+            </div>
+            <CardDescription className="text-base">
+              Transform your notes into polished social media posts
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your.email@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendLoginLink()}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            {error && (
+              <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="p-3 rounded-md bg-green-50 text-green-700 text-sm">
+                {success}
+              </div>
+            )}
+            <Button
+              onClick={sendLoginLink}
+              disabled={loading || !email}
+              className="w-full bg-purple-600 hover:bg-purple-700"
+              size="lg"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Mail className="mr-2 h-4 w-4" />
+                  Send Login Link
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   return (
-    <div className="container">
-      <div className="card">
-        <h1>Submit Notes for Social Media Post</h1>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50/50">
+      <div className="container mx-auto py-8 px-4 max-w-4xl">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent">
+              DMRT Postal Service
+            </h1>
+          </div>
+          <p className="text-muted-foreground">Transform your notes into polished social media posts</p>
+        </div>
 
         {!submission ? (
-          <>
-            <label className="label" htmlFor="notes">
-              Notes
-            </label>
-            <textarea
-              id="notes"
-              className="textarea"
-              placeholder="Enter your incident or training notes here..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-
-            <label className="label" htmlFor="photos">
-              Photos (optional)
-            </label>
-            <div
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              style={{
-                border: '2px dashed #d1d5db',
-                borderRadius: '8px',
-                padding: '2rem',
-                textAlign: 'center',
-                marginBottom: '1rem',
-                cursor: 'pointer',
-              }}
-            >
-              <p>Drag and drop photos here, or</p>
-              <input
-                id="photos"
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handlePhotoChange}
-                style={{ marginTop: '1rem' }}
-              />
-            </div>
-
-            {photoPreviews.length > 0 && (
-              <div className="photo-grid">
-                {photoPreviews.map((preview, index) => (
-                  <div key={index} className="photo-item">
-                    <img src={preview} alt={`Preview ${index + 1}`} />
-                    <button
-                      className="photo-remove"
-                      onClick={() => removePhoto(index)}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
+          <Card className="shadow-xl border-purple-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-purple-600" />
+                Submit Notes
+              </CardTitle>
+              <CardDescription>
+                Enter your incident or training notes below. Our AI will transform them into a professional social media post.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Enter your incident or training notes here..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="min-h-[200px] resize-none"
+                />
               </div>
-            )}
 
-            {error && <div className="error">{error}</div>}
-            {success && <div className="success">{success}</div>}
+              <div className="space-y-2">
+                <Label>Photos (optional)</Label>
+                <div
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors cursor-pointer bg-purple-50/50"
+                >
+                  <ImageIcon className="h-12 w-12 mx-auto mb-4 text-purple-600" />
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Drag and drop photos here, or
+                  </p>
+                  <Input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="max-w-xs mx-auto"
+                  />
+                </div>
+              </div>
 
-            <button
-              className="button"
-              onClick={submitNotes}
-              disabled={loading || !notes.trim()}
-            >
-              {loading ? 'Generating Post...' : 'Generate Post'}
-            </button>
-          </>
+              {photoPreviews.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {photoPreviews.map((preview, index) => (
+                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-purple-200">
+                      <img src={preview} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => removePhoto(index)}
+                        className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {error && (
+                <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="p-3 rounded-md bg-green-50 text-green-700 text-sm">
+                  {success}
+                </div>
+              )}
+
+              <Button
+                onClick={submitNotes}
+                disabled={loading || !notes.trim()}
+                className="w-full bg-purple-600 hover:bg-purple-700"
+                size="lg"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating Post...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="mr-2 h-4 w-4" />
+                    Generate Post with AI
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
         ) : (
-          <>
-            <h2 style={{ marginBottom: '1rem' }}>Generated Post</h2>
-            <div
-              style={{
-                background: '#f9fafb',
-                padding: '1.5rem',
-                borderRadius: '8px',
-                whiteSpace: 'pre-wrap',
-                marginBottom: '1rem',
-                lineHeight: '1.6',
-              }}
-            >
-              {submission.finalPostText}
-            </div>
+          <div className="space-y-6">
+            <Card className="shadow-xl border-purple-200">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-purple-600 animate-sparkle" />
+                    AI-Generated Post
+                  </CardTitle>
+                  <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                    Ready for Review
+                  </Badge>
+                </div>
+                <CardDescription>
+                  Review the generated post below. You can provide feedback to refine it.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-lg border border-purple-200">
+                  <pre className="whitespace-pre-wrap text-sm leading-relaxed font-medium">
+                    {submission.finalPostText}
+                  </pre>
+                </div>
 
-            {submission.photoPaths.length > 0 && (
-              <div className="photo-grid" style={{ marginBottom: '1rem' }}>
-                {submission.photoPaths.map((path, index) => (
-                  <div key={index} className="photo-item">
-                    <img src={path} alt={`Photo ${index + 1}`} />
+                {submission.photoPaths.length > 0 && (
+                  <div>
+                    <Label className="mb-2 block">Photos</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {submission.photoPaths.map((path, index) => (
+                        <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-purple-200">
+                          <img src={path} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
-            )}
+                )}
 
-            <label className="label" htmlFor="feedback">
-              Feedback (optional - e.g., &quot;soften tone&quot;, &quot;add weather details&quot;)
-            </label>
-            <textarea
-              id="feedback"
-              className="textarea"
-              placeholder="Enter feedback to improve the post..."
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-              style={{ minHeight: '100px' }}
-            />
+                <Separator />
 
-            {error && <div className="error">{error}</div>}
-            {success && <div className="success">{success}</div>}
+                <div className="space-y-2">
+                  <Label htmlFor="feedback">
+                    Feedback (optional)
+                    <span className="text-muted-foreground text-xs ml-2">
+                      e.g., &quot;soften tone&quot;, &quot;add weather details&quot;
+                    </span>
+                  </Label>
+                  <Textarea
+                    id="feedback"
+                    placeholder="Enter feedback to improve the post..."
+                    value={feedback}
+                    onChange={(e) => setFeedback(e.target.value)}
+                    className="min-h-[100px] resize-none"
+                  />
+                </div>
 
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <button
-                className="button"
-                onClick={regeneratePost}
-                disabled={regenerating}
-              >
-                {regenerating ? 'Regenerating...' : 'Regenerate'}
-              </button>
-              <button
-                className="button button-secondary"
-                onClick={markAsReady}
-                disabled={loading}
-              >
-                {loading ? 'Submitting...' : 'Post is Ready'}
-              </button>
-            </div>
-          </>
+                {error && (
+                  <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="p-3 rounded-md bg-green-50 text-green-700 text-sm">
+                    {success}
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <Button
+                    onClick={regeneratePost}
+                    disabled={regenerating}
+                    variant="outline"
+                    className="flex-1 border-purple-300 hover:bg-purple-50"
+                  >
+                    {regenerating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Regenerating...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="mr-2 h-4 w-4" />
+                        Regenerate
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={markAsReady}
+                    disabled={loading}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700"
+                    size="lg"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="mr-2 h-4 w-4" />
+                        Post is Ready
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </div>
     </div>
