@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { getBaseUrl } from './url'
 
 function getResend() {
   const apiKey = process.env.RESEND_API_KEY
@@ -14,11 +15,7 @@ export async function sendMagicLink(
   code: string,
   submissionId?: string
 ): Promise<void> {
-  let baseUrl = process.env.VERCEL_URL || 'http://localhost:3000'
-  // Ensure https in production
-  if (baseUrl && !baseUrl.startsWith('http')) {
-    baseUrl = `https://${baseUrl}`
-  }
+  const baseUrl = getBaseUrl()
   let link = baseUrl
 
   if (role === 'team_member') {
@@ -42,10 +39,7 @@ export async function sendMagicLink(
 }
 
 export async function notifyPRO(submissionId: string): Promise<void> {
-  let baseUrl = process.env.VERCEL_URL || 'http://localhost:3000'
-  if (baseUrl && !baseUrl.startsWith('http')) {
-    baseUrl = `https://${baseUrl}`
-  }
+  const baseUrl = getBaseUrl()
   await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: process.env.PRO_EMAIL!,
@@ -58,10 +52,7 @@ export async function notifyPRO(submissionId: string): Promise<void> {
 }
 
 export async function notifyTeamLeader(submissionId: string, code: string): Promise<void> {
-  let baseUrl = process.env.VERCEL_URL || 'http://localhost:3000'
-  if (baseUrl && !baseUrl.startsWith('http')) {
-    baseUrl = `https://${baseUrl}`
-  }
+  const baseUrl = getBaseUrl()
   const link = `${baseUrl}/approve/${submissionId}?code=${code}`
 
   await getResend().emails.send({
@@ -77,10 +68,7 @@ export async function notifyTeamLeader(submissionId: string, code: string): Prom
 }
 
 export async function notifyProPostApproved(submissionId: string): Promise<void> {
-  let baseUrl = process.env.VERCEL_URL || 'http://localhost:3000'
-  if (baseUrl && !baseUrl.startsWith('http')) {
-    baseUrl = `https://${baseUrl}`
-  }
+  const baseUrl = getBaseUrl()
   await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: process.env.PRO_EMAIL!,
@@ -93,10 +81,7 @@ export async function notifyProPostApproved(submissionId: string): Promise<void>
 }
 
 export async function notifyProPostRejected(submissionId: string, comment: string): Promise<void> {
-  let baseUrl = process.env.VERCEL_URL || 'http://localhost:3000'
-  if (baseUrl && !baseUrl.startsWith('http')) {
-    baseUrl = `https://${baseUrl}`
-  }
+  const baseUrl = getBaseUrl()
   await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: process.env.PRO_EMAIL!,
