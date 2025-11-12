@@ -1,5 +1,4 @@
 import { Resend } from 'resend'
-import { getBaseUrl } from './url'
 
 function getResend() {
   const apiKey = process.env.RESEND_API_KEY
@@ -7,6 +6,23 @@ function getResend() {
     throw new Error('RESEND_API_KEY is not set')
   }
   return new Resend(apiKey)
+}
+
+function getBaseUrl(): string {
+  // Use NEXT_PUBLIC_APP_URL or APP_URL if set (for custom domains)
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL
+  }
+  if (process.env.APP_URL) {
+    return process.env.APP_URL
+  }
+  // Fall back to VERCEL_URL (Vercel sets this automatically)
+  if (process.env.VERCEL_URL) {
+    const url = process.env.VERCEL_URL
+    return url.startsWith('http') ? url : `https://${url}`
+  }
+  // Default to localhost for development
+  return 'http://localhost:3000'
 }
 
 export async function sendMagicLink(
@@ -26,8 +42,13 @@ export async function sendMagicLink(
     link += `/approve/${submissionId}?code=${code}`
   }
 
-  await getResend().emails.send({
-    from: process.env.RESEND_FROM_EMAIL!,
+  const fromEmail = process.env.RESEND_FROM_EMAIL
+  if (!fromEmail) {
+    throw new Error('RESEND_FROM_EMAIL is not set')
+  }
+
+  const result = await getResend().emails.send({
+    from: fromEmail,
     to: email,
     subject: 'DMRT Postal Service - Your login link',
     html: `
@@ -36,6 +57,10 @@ export async function sendMagicLink(
       <p>This link expires in 4 hours.</p>
     `,
   })
+
+  if (result.error) {
+    throw new Error(`Resend API error: ${JSON.stringify(result.error)}`)
+  }
 }
 
 export async function notifyPRO(submissionId: string): Promise<void> {

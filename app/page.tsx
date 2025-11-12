@@ -89,7 +89,11 @@ export default function HomePage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to send login link')
+        // Show detailed error if available
+        const errorMsg = data.details 
+          ? `${data.error} (${data.code || 'unknown'}): ${data.details}`
+          : data.error || 'Failed to send login link'
+        throw new Error(errorMsg)
       }
 
       setSuccess('Login link sent! Check your email.')
@@ -307,7 +311,7 @@ export default function HomePage() {
                 <h2 className="text-2xl font-semibold text-gray-900">Submit Notes</h2>
                 <button
                   onClick={() => setShowPromptModal(true)}
-                  className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                  className="flex items-center gap-2 text-sm text-gray-700 hover:text-black font-medium transition-colors"
                 >
                   <Info className="h-4 w-4" />
                   View AI Prompt
@@ -339,9 +343,9 @@ export default function HomePage() {
                 <div
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
-                  className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center hover:border-purple-400 transition-colors cursor-pointer bg-purple-50/50"
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer bg-gray-50"
                 >
-                  <ImageIcon className="h-12 w-12 mx-auto mb-4 text-purple-600" />
+                  <ImageIcon className="h-12 w-12 mx-auto mb-4 text-gray-600" />
                   <p className="text-sm text-gray-600 mb-2">Drag and drop photos here, or</p>
                   <input
                     id="photos"
@@ -411,7 +415,7 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setShowPromptModal(true)}
-                    className="flex items-center gap-1.5 text-xs text-purple-600 hover:text-purple-700 font-medium transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-gray-700 hover:text-black font-medium transition-colors"
                   >
                     <Info className="h-3.5 w-3.5" />
                     View Prompt
@@ -423,7 +427,7 @@ export default function HomePage() {
                 Review the generated post below. You can provide feedback to refine it.
               </p>
 
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-lg border border-purple-200 mb-6">
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
                 <pre className="whitespace-pre-wrap text-sm leading-relaxed font-medium text-gray-900">
                   {submission.finalPostText}
                 </pre>
@@ -442,7 +446,7 @@ export default function HomePage() {
                 </div>
               )}
 
-              <div className="border-t border-purple-200 pt-6">
+              <div className="border-t border-gray-200 pt-6">
                 <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-2">
                   Feedback (optional)
                   <span className="text-gray-500 text-xs ml-2">

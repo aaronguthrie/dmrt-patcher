@@ -188,7 +188,7 @@ export default function ProPage() {
           <div className="text-center mb-6">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Social Media</h1>
+              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
             </div>
             <p className="text-gray-600">PRO Dashboard</p>
           </div>
@@ -256,7 +256,7 @@ export default function ProPage() {
           <div className="text-center mb-6">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-              <h1 className="text-4xl font-bold text-gradient-purple">DMRT Social Media</h1>
+              <h1 className="text-4xl font-bold text-gradient-purple">DMRT Postal Service</h1>
             </div>
             <p className="text-gray-600 text-lg">PRO Dashboard</p>
             <p className="text-gray-500 mt-2">Review and post submissions</p>
@@ -319,7 +319,7 @@ export default function ProPage() {
                       }
                     />
                   ) : (
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-lg border border-purple-200">
+                    <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                       <pre className="whitespace-pre-wrap text-sm leading-relaxed font-medium text-gray-900">
                         {submission.editedByPro || submission.finalPostText}
                       </pre>
@@ -400,7 +400,7 @@ export default function ProPage() {
                           href={`https://facebook.com/${submission.facebookPostId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+                          className="text-black hover:text-gray-700 font-medium text-sm"
                         >
                           View on Facebook →
                         </a>
@@ -410,7 +410,7 @@ export default function ProPage() {
                           href={`https://instagram.com/p/${submission.instagramPostId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+                          className="text-black hover:text-gray-700 font-medium text-sm"
                         >
                           View on Instagram →
                         </a>

@@ -5,8 +5,6 @@ import { notifyTeamLeader } from '@/lib/resend'
 import { SubmissionStatus } from '@prisma/client'
 import { isBot } from '@/lib/security'
 
-export const dynamic = 'force-dynamic'
-
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }

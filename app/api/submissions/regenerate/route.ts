@@ -3,8 +3,6 @@ import { prisma } from '@/lib/db'
 import { generatePost } from '@/lib/gemini'
 import { isBot } from '@/lib/security'
 
-export const dynamic = 'force-dynamic'
-
 export async function POST(request: NextRequest) {
   try {
     // Block bots

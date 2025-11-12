@@ -17,11 +17,11 @@ export default function PromptModal({ isOpen, onClose }: PromptModalProps) {
       onClick={onClose}
     >
       <div 
-        className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border-2 border-purple-200"
+        className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border-2 border-gray-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 flex items-center justify-between">
+        <div className="bg-black text-white p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <FileText className="h-6 w-6" />
             <h2 className="text-2xl font-bold">AI System Prompt</h2>
@@ -44,9 +44,9 @@ export default function PromptModal({ isOpen, onClose }: PromptModalProps) {
               </pre>
             </div>
             
-            <div className="mt-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-              <p className="text-sm text-purple-900">
-                <strong className="text-purple-700">Note:</strong> This prompt is used as the system instruction for the AI model. 
+            <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <p className="text-sm text-gray-900">
+                <strong className="text-gray-700">Note:</strong> This prompt is used as the system instruction for the AI model. 
                 Your notes are sent as the user prompt, and the AI generates the post based on these guidelines.
               </p>
             </div>

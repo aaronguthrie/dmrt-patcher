@@ -3,8 +3,6 @@ import { prisma } from '@/lib/db'
 import { postToFacebook, postToInstagram } from '@/lib/meta'
 import { isBot } from '@/lib/security'
 
-export const dynamic = 'force-dynamic'
-
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }

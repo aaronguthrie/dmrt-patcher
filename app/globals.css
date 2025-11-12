@@ -8,7 +8,7 @@
   }
   
   body {
-    @apply bg-gradient-to-br from-purple-50 via-white to-purple-50/50 text-gray-900 antialiased;
+    @apply bg-gray-50 text-gray-900 antialiased;
   }
 }
 
@@ -18,7 +18,7 @@
   }
   
   .btn-primary {
-    @apply bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800 shadow-md hover:shadow-lg;
+    @apply bg-black text-white hover:bg-gray-800 active:bg-gray-900 shadow-md hover:shadow-lg;
   }
   
   .btn-secondary {
@@ -30,23 +30,23 @@
   }
   
   .btn-ai {
-    @apply bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200;
+    @apply bg-black text-white hover:bg-gray-800 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200;
   }
   
   .input {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all;
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all;
   }
   
   .textarea {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-y;
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all resize-y;
   }
   
   .card {
-    @apply bg-white rounded-xl shadow-lg border border-purple-100 p-6 md:p-8;
+    @apply bg-white rounded-xl shadow-lg border border-gray-200 p-6 md:p-8;
   }
   
   .card-ai {
-    @apply bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200 shadow-xl;
+    @apply bg-gray-50 border-gray-200 shadow-xl;
   }
   
   .badge {
@@ -54,7 +54,7 @@
   }
   
   .badge-purple {
-    @apply bg-purple-100 text-purple-700;
+    @apply bg-gray-100 text-gray-700;
   }
   
   .badge-success {
@@ -66,7 +66,7 @@
   }
   
   .photo-item {
-    @apply relative aspect-square rounded-lg overflow-hidden border-2 border-purple-200 shadow-md;
+    @apply relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 shadow-md;
   }
   
   .photo-remove {

@@ -15,7 +15,7 @@ function ThankYouContent() {
         <div className="mb-6">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-            <h1 className="text-3xl font-bold text-gradient-purple">DMRT Social Media</h1>
+            <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
           </div>
           <div className="flex justify-center mb-6">
             <div className="relative">
@@ -29,23 +29,23 @@ function ThankYouContent() {
           </p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 p-6 rounded-lg border border-purple-200 mb-6 text-left">
-          <h3 className="font-semibold text-purple-900 mb-3">What happens next?</h3>
-          <ul className="space-y-2 text-sm text-purple-800">
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6 text-left">
+          <h3 className="font-semibold text-gray-900 mb-3">What happens next?</h3>
+          <ul className="space-y-2 text-sm text-gray-800">
             <li className="flex items-start gap-2">
-              <span className="text-purple-600 mt-1">•</span>
+              <span className="text-black mt-1">•</span>
               <span>The PRO will review your post</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-purple-600 mt-1">•</span>
+              <span className="text-black mt-1">•</span>
               <span>They may edit it before posting</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-purple-600 mt-1">•</span>
+              <span className="text-black mt-1">•</span>
               <span>For sensitive posts, it may be sent to the team leader for approval</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-purple-600 mt-1">•</span>
+              <span className="text-black mt-1">•</span>
               <span>Once approved, it will be posted to Facebook and Instagram</span>
             </li>
           </ul>
@@ -67,7 +67,7 @@ function ThankYouContent() {
           </Link>
         </div>
 
-        <div className="pt-6 border-t border-purple-200">
+        <div className="pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-600">
             <strong className="text-gray-900">Note:</strong> You can no longer edit this submission. 
             If you need to make changes, please contact the PRO or submit a new post.
@@ -83,7 +83,7 @@ export default function ThankYouPage() {
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
         <div className="card w-full max-w-md text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
