@@ -39,7 +39,7 @@ Create a `.env` file in the root directory with the following variables:
 POSTGRES_URL="postgresql://user:password@host:5432/dbname"
 
 # Authentication
-APPROVED_TEAM_EMAILS=aaronguthrie@me.com,member2@email.com,member3@email.com
+APPROVED_TEAM_EMAILS=email1@example.com,email2@example.com,email3@example.com
 PRO_EMAIL=pro@donegalmrt.ie
 TEAM_LEADER_EMAIL=teamleader@donegalmrt.ie
 DASHBOARD_PASSWORD=testing123
