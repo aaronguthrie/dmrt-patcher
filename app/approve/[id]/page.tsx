@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
+import { Sparkles, Loader2, CheckCircle2, XCircle, X } from 'lucide-react'
 
 function ApprovePageContent() {
   const params = useParams()
@@ -130,9 +131,10 @@ function ApprovePageContent() {
 
   if (loading && !authenticated) {
     return (
-      <div className="container">
-        <div className="card">
-          <p>Validating authorization...</p>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card w-full max-w-md text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
+          <p className="text-gray-600">Validating authorization...</p>
         </div>
       </div>
     )
@@ -140,10 +142,20 @@ function ApprovePageContent() {
 
   if (!authenticated) {
     return (
-      <div className="container">
-        <div className="card">
-          <h1>Authorization Required</h1>
-          <div className="error">{error || 'Link expired or invalid'}</div>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card w-full max-w-md">
+          <div className="text-center mb-6">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
+              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
+            </div>
+            <p className="text-gray-600">Team Leader Approval</p>
+          </div>
+          {error && (
+            <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 mb-4">
+              {error || 'Link expired or invalid'}
+            </div>
+          )}
         </div>
       </div>
     )
@@ -151,9 +163,10 @@ function ApprovePageContent() {
 
   if (!submission) {
     return (
-      <div className="container">
-        <div className="card">
-          <p>Loading submission...</p>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card w-full max-w-md text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
+          <p className="text-gray-600">Loading submission...</p>
         </div>
       </div>
     )
@@ -162,91 +175,137 @@ function ApprovePageContent() {
   const postText = submission.editedByPro || submission.finalPostText
 
   return (
-    <div className="container">
-      <div className="card">
-        <h1>Review Post for Approval</h1>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <strong>Submitted by:</strong> {submission.submittedByEmail}
-          <br />
-          <strong>Date:</strong> {new Date(submission.createdAt).toLocaleString()}
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
+            <h1 className="text-4xl font-bold text-gradient-purple">DMRT Postal Service</h1>
+          </div>
+          <p className="text-gray-600 text-lg">Team Leader Approval</p>
         </div>
 
-        <label className="label">Post Text (read-only)</label>
-        <div
-          style={{
-            background: '#f9fafb',
-            padding: '1.5rem',
-            borderRadius: '8px',
-            whiteSpace: 'pre-wrap',
-            marginBottom: '1rem',
-            lineHeight: '1.6',
-          }}
-        >
-          {postText}
-        </div>
-
-        {submission.photoPaths.length > 0 && (
-          <div className="photo-grid" style={{ marginBottom: '1rem' }}>
-            {submission.photoPaths.map((path: string, index: number) => (
-              <div key={index} className="photo-item">
-                <img src={path} alt={`Photo ${index + 1}`} />
+        <div className="card">
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Review Post for Approval</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div>
+                <span className="text-sm font-medium text-gray-500">Submitted by</span>
+                <p className="text-gray-900 font-medium">{submission.submittedByEmail}</p>
               </div>
-            ))}
-          </div>
-        )}
-
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
-
-        {!showRejectForm ? (
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <button
-              className="button"
-              onClick={handleApprove}
-              disabled={loading}
-            >
-              {loading ? 'Approving...' : 'Approve'}
-            </button>
-            <button
-              className="button button-danger"
-              onClick={() => setShowRejectForm(true)}
-              disabled={loading}
-            >
-              Reject
-            </button>
-          </div>
-        ) : (
-          <div>
-            <label className="label">Rejection Comment</label>
-            <textarea
-              className="textarea"
-              value={rejectionComment}
-              onChange={(e) => setRejectionComment(e.target.value)}
-              placeholder="Explain why this post is being rejected..."
-              style={{ minHeight: '100px' }}
-            />
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <button
-                className="button button-danger"
-                onClick={handleReject}
-                disabled={loading || !rejectionComment.trim()}
-              >
-                {loading ? 'Rejecting...' : 'Confirm Rejection'}
-              </button>
-              <button
-                className="button button-secondary"
-                onClick={() => {
-                  setShowRejectForm(false)
-                  setRejectionComment('')
-                }}
-                disabled={loading}
-              >
-                Cancel
-              </button>
+              <div>
+                <span className="text-sm font-medium text-gray-500">Date</span>
+                <p className="text-gray-900 font-medium">{new Date(submission.createdAt).toLocaleString()}</p>
+              </div>
             </div>
           </div>
-        )}
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Post Text</label>
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <pre className="whitespace-pre-wrap text-sm leading-relaxed font-medium text-gray-900">
+                {postText}
+              </pre>
+            </div>
+          </div>
+
+          {submission.photoPaths.length > 0 && (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Photos</label>
+              <div className="photo-grid">
+                {submission.photoPaths.map((path: string, index: number) => (
+                  <div key={index} className="photo-item">
+                    <img src={path} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 mb-4">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-4 rounded-lg bg-green-50 text-green-700 border border-green-200 mb-4">
+              {success}
+            </div>
+          )}
+
+          {!showRejectForm ? (
+            <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <button
+                className="btn btn-primary flex-1"
+                onClick={handleApprove}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                    Approving...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="inline-block mr-2 h-4 w-4" />
+                    Approve
+                  </>
+                )}
+              </button>
+              <button
+                className="btn btn-danger flex-1"
+                onClick={() => setShowRejectForm(true)}
+                disabled={loading}
+              >
+                <XCircle className="inline-block mr-2 h-4 w-4" />
+                Reject
+              </button>
+            </div>
+          ) : (
+            <div className="pt-4 border-t border-gray-200">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Rejection Comment
+              </label>
+              <textarea
+                className="textarea min-h-[120px]"
+                value={rejectionComment}
+                onChange={(e) => setRejectionComment(e.target.value)}
+                placeholder="Explain why this post is being rejected..."
+              />
+              <div className="flex gap-3 mt-4">
+                <button
+                  className="btn btn-danger flex-1"
+                  onClick={handleReject}
+                  disabled={loading || !rejectionComment.trim()}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                      Rejecting...
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="inline-block mr-2 h-4 w-4" />
+                      Confirm Rejection
+                    </>
+                  )}
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setShowRejectForm(false)
+                    setRejectionComment('')
+                  }}
+                  disabled={loading}
+                >
+                  <X className="inline-block mr-2 h-4 w-4" />
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -254,9 +313,15 @@ function ApprovePageContent() {
 
 export default function ApprovePage() {
   return (
-    <Suspense fallback={<div className="container"><div className="card"><p>Loading...</p></div></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="card w-full max-w-md text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
       <ApprovePageContent />
     </Suspense>
   )
 }
-

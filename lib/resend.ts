@@ -70,15 +70,17 @@ export async function sendMagicLink(
   }
 }
 
-export async function notifyPRO(submissionId: string): Promise<void> {
+export async function notifyPRO(submissionId: string, code: string): Promise<void> {
   const baseUrl = getBaseUrl()
+  const link = `${baseUrl}/pro?code=${code}`
+  
   await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: process.env.PRO_EMAIL!,
-    subject: 'New DMRT Post - Awaiting your approval',
+    subject: 'New DMRT Post - Awaiting your review',
     html: `
-      <p>A social media post is awaiting your approval. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
-      <p><a href="${baseUrl}/pro">View pending posts</a></p>
+      <p>A social media post is awaiting your review. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
+      <p><a href="${link}">Review pending posts</a></p>
     `,
   })
 }
