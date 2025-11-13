@@ -16,6 +16,8 @@ function ApprovePageContent() {
   const [submission, setSubmission] = useState<any>(null)
   const [rejectionComment, setRejectionComment] = useState('')
   const [showRejectForm, setShowRejectForm] = useState(false)
+  const [completed, setCompleted] = useState(false)
+  const [actionType, setActionType] = useState<'approved' | 'rejected' | null>(null)
 
   useEffect(() => {
     const code = searchParams.get('code')
@@ -89,10 +91,10 @@ function ApprovePageContent() {
         throw new Error(data.error || 'Failed to approve')
       }
 
-      setSuccess('Post approved! PRO will be notified.')
+      setActionType('approved')
+      setCompleted(true)
     } catch (err: any) {
       setError(err.message)
-    } finally {
       setLoading(false)
     }
   }
@@ -120,11 +122,10 @@ function ApprovePageContent() {
         throw new Error(data.error || 'Failed to reject')
       }
 
-      setSuccess('Post rejected. PRO will be notified.')
-      setShowRejectForm(false)
+      setActionType('rejected')
+      setCompleted(true)
     } catch (err: any) {
       setError(err.message)
-    } finally {
       setLoading(false)
     }
   }
@@ -167,6 +168,38 @@ function ApprovePageContent() {
         <div className="card w-full max-w-md text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
           <p className="text-gray-600">Loading submission...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show confirmation page after approval/rejection
+  if (completed) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="card w-full max-w-2xl text-center">
+          <div className="mb-6">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
+              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
+            </div>
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                {actionType === 'approved' ? (
+                  <CheckCircle2 className="h-20 w-20 text-green-500" />
+                ) : (
+                  <XCircle className="h-20 w-20 text-red-500" />
+                )}
+                <div className={`absolute inset-0 ${actionType === 'approved' ? 'bg-green-500/20' : 'bg-red-500/20'} rounded-full animate-ping`} />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              {actionType === 'approved' ? 'Post Approved!' : 'Post Rejected'}
+            </h2>
+            <p className="text-lg text-gray-600 font-medium">
+              PRO will be notified.
+            </p>
+          </div>
         </div>
       </div>
     )
