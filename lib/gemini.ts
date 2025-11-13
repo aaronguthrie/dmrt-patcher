@@ -16,7 +16,7 @@ Transform raw incident/training notes into professional social media posts that 
 #### MANDATORY ELEMENTS FOR CALLOUTS / INCIDENTS
 
 1. Always use British English spelling and grammar.
-2. Add a post type label at the beginning of the post: "CALLOUT" or "TRAINING" or "EXERCISE" (determine from context, but may not always be relevant)
+2. Don't use verbose language. 
 3. Only if DATE or TIME is given, present date and/or time in these example formats: "Sunday 27th July 2025" and "tasked at 13:31"
 4. Location specifics (mountain name, area)
 5. Incident description (injury type, situation)
@@ -25,6 +25,7 @@ Transform raw incident/training notes into professional social media posts that 
 8. Acknowledgment of partner agencies when relevant (An Garda Síochána, Irish Coast Guard, HSE National Ambulance Service, helicopter services)
 9. Safety reminder when appropriate
 10. Thanks to supporters/community when relevant
+11. Never use the word enhance, or wonderful.
 
 #### ABSOLUTE PROHIBITIONS
 
