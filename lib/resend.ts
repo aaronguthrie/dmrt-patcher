@@ -59,9 +59,9 @@ export async function sendMagicLink(
     to: email,
     subject: 'DMRT Postal Service - Your login link',
     html: `
-      <p>Click the link below to access DMRT Postal Service to get help putting social media posts together in our brand voice.</p>
+      <p>Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
+      <p>Do not share this link with anyone else.</p>
       <p><a href="${link}">${link}</a></p>
-      <p>This link expires in 4 hours.</p>
     `,
   })
 
@@ -75,9 +75,9 @@ export async function notifyPRO(submissionId: string): Promise<void> {
   await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: process.env.PRO_EMAIL!,
-    subject: 'New DMRT Post Ready for Review',
+    subject: 'New DMRT Post - Awaiting your approval',
     html: `
-      <p>A new social media post is ready for your review.</p>
+      <p>A social media post is awaiting your approval. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
       <p><a href="${baseUrl}/pro">View pending posts</a></p>
     `,
   })
@@ -90,11 +90,10 @@ export async function notifyTeamLeader(submissionId: string, code: string): Prom
   await getResend().emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: process.env.TEAM_LEADER_EMAIL!,
-    subject: 'DMRT Post Awaiting Your Approval',
+    subject: 'New DMRT Post - Awaiting your approval',
     html: `
-      <p>A social media post is awaiting your approval.</p>
+      <p>A social media post is awaiting your approval. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
       <p><a href="${link}">Review and approve</a></p>
-      <p>This link expires in 4 hours.</p>
     `,
   })
 }
