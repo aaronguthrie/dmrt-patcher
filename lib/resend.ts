@@ -61,7 +61,7 @@ export async function sendMagicLink(
   const result = await getResend().emails.send({
     from: getFromEmail(),
     to: email,
-    subject: 'DMRT Postal Service - Your login link',
+    subject: 'Your login link',
     html: `
       <p>Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
       <p>Do not share this link with anyone else.</p>
@@ -81,7 +81,7 @@ export async function notifyPRO(submissionId: string, code: string): Promise<voi
   await getResend().emails.send({
     from: getFromEmail(),
     to: process.env.PRO_EMAIL!,
-    subject: 'New DMRT Post - Awaiting your review',
+    subject: 'Awaiting your review',
     html: `
       <p>A social media post is awaiting your review. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
       <p><a href="${link}">Review pending posts</a></p>
@@ -104,7 +104,7 @@ export async function notifyTeamLeader(submissionId: string, code: string): Prom
   await getResend().emails.send({
     from: getFromEmail(),
     to: leaderEmails,
-    subject: 'New DMRT Post - Awaiting your approval',
+    subject: 'Awaiting your approval',
     html: `
       <p>A social media post is awaiting your approval. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
       <p><a href="${link}">Review and approve</a></p>
@@ -119,7 +119,7 @@ export async function notifyProPostApproved(submissionId: string, code: string):
   await getResend().emails.send({
     from: getFromEmail(),
     to: process.env.PRO_EMAIL!,
-    subject: 'Post Approved - Ready to Post',
+    subject: 'Post Approved - Ready to post',
     html: `
       <p>Your post has been approved by the team leader. You can now post it to social media.</p>
       <p><a href="${link}">Go to PRO dashboard</a></p>
