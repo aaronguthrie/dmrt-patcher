@@ -1,5 +1,6 @@
 // Rate limiting utility - supports multiple backends
-// Priority: Vercel KV > Upstash Redis > In-memory (dev only)
+// Priority: Neon PostgreSQL > Upstash Redis > In-memory (dev only)
+// Note: Vercel KV was replaced with Marketplace Storage integrations (June 2025)
 
 interface RateLimitResult {
   success: boolean
@@ -147,6 +148,99 @@ class VercelKVRateLimiter implements RateLimiter {
   }
 }
 
+// Neon PostgreSQL rate limiter (uses existing database connection)
+class NeonPostgreSQLRateLimiter implements RateLimiter {
+  private prisma: any
+  private maxRequests: number
+  private windowMs: number
+
+  constructor(prisma: any, maxRequests: number = 5, windowMs: number = 15 * 60 * 1000) {
+    this.prisma = prisma
+    this.maxRequests = maxRequests
+    this.windowMs = windowMs
+  }
+
+  async limit(identifier: string): Promise<RateLimitResult> {
+    const now = Date.now()
+    const resetAt = now + this.windowMs
+    const windowSeconds = Math.ceil(this.windowMs / 1000)
+
+    try {
+      // Use raw SQL for atomic operations (faster than Prisma for this use case)
+      // Clean up expired entries first
+      await this.prisma.$executeRaw`
+        DELETE FROM rate_limits 
+        WHERE reset_at < ${now}
+      `
+
+      // Get or create rate limit record
+      const result = await this.prisma.$queryRaw`
+        INSERT INTO rate_limits (identifier, count, reset_at, created_at)
+        VALUES (${identifier}, 1, ${resetAt}, ${now})
+        ON CONFLICT (identifier) 
+        DO UPDATE SET 
+          count = CASE 
+            WHEN reset_at < ${now} THEN 1
+            WHEN count >= ${this.maxRequests} THEN count
+            ELSE count + 1
+          END,
+          reset_at = CASE 
+            WHEN reset_at < ${now} THEN ${resetAt}
+            ELSE reset_at
+          END
+        RETURNING count, reset_at
+      `
+
+      const record = result[0]
+      const count = Number(record.count)
+
+      if (count > this.maxRequests) {
+        return {
+          success: false,
+          limit: this.maxRequests,
+          remaining: 0,
+          reset: Number(record.reset_at),
+        }
+      }
+
+      return {
+        success: true,
+        limit: this.maxRequests,
+        remaining: Math.max(0, this.maxRequests - count),
+        reset: Number(record.reset_at),
+      }
+    } catch (error: any) {
+      // If table doesn't exist, create it and retry once
+      if (error?.code === '42P01' || error?.message?.includes('does not exist')) {
+        try {
+          await this.prisma.$executeRaw`
+            CREATE TABLE IF NOT EXISTS rate_limits (
+              identifier TEXT PRIMARY KEY,
+              count INTEGER NOT NULL DEFAULT 1,
+              reset_at BIGINT NOT NULL,
+              created_at BIGINT NOT NULL
+            )
+          `
+          // Retry the limit operation
+          return this.limit(identifier)
+        } catch (createError) {
+          console.error('Rate limit error (Neon PostgreSQL - table creation):', createError)
+        }
+      } else {
+        console.error('Rate limit error (Neon PostgreSQL):', error)
+      }
+      
+      // Fail open - allow request if rate limiting fails
+      return {
+        success: true,
+        limit: this.maxRequests,
+        remaining: this.maxRequests,
+        reset: resetAt,
+      }
+    }
+  }
+}
+
 // Upstash Redis rate limiter
 class UpstashRedisRateLimiter implements RateLimiter {
   private redis: any
@@ -218,16 +312,15 @@ export function getRateLimiter(
     return rateLimiterInstance
   }
 
-  // Try Vercel KV first
-  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+  // Try Neon PostgreSQL first (you already have it connected)
+  if (process.env.POSTGRES_URL) {
     try {
-      // Dynamic import to avoid errors if @vercel/kv not installed
-      const { kv } = require('@vercel/kv')
-      rateLimiterInstance = new VercelKVRateLimiter(kv, maxRequests, windowMs)
-      console.log('✅ Using Vercel KV for rate limiting')
+      const { prisma } = require('./db')
+      rateLimiterInstance = new NeonPostgreSQLRateLimiter(prisma, maxRequests, windowMs)
+      console.log('✅ Using Neon PostgreSQL for rate limiting')
       return rateLimiterInstance
     } catch (error) {
-      console.warn('Vercel KV not available, trying Upstash Redis...')
+      console.warn('Neon PostgreSQL not available for rate limiting, trying Upstash Redis...')
     }
   }
 
@@ -249,7 +342,7 @@ export function getRateLimiter(
 
   // Fallback to in-memory (development only - warns in production)
   if (process.env.NODE_ENV === 'production') {
-    console.warn('⚠️  WARNING: Using in-memory rate limiting in production. This will not work effectively in serverless. Please configure Vercel KV or Upstash Redis.')
+    console.warn('⚠️  WARNING: Using in-memory rate limiting in production. This will not work effectively in serverless. Please ensure POSTGRES_URL is set (Neon) or configure Upstash Redis.')
   } else {
     console.warn('⚠️  Using in-memory rate limiting (dev only - not suitable for production)')
   }

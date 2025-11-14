@@ -8,6 +8,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/botid/:path*',
+        destination: 'https://botid.vercel.app/:path*',
+      },
+    ]
+  },
   async headers() {
     return [
       {

@@ -27,9 +27,17 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('X-XSS-Protection', '1; mode=block')
   response.headers.set('Referrer-Policy', 'no-referrer')
+  
+  // Content Security Policy - prevents XSS attacks
+  response.headers.set(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.resend.com https://generativelanguage.googleapis.com https://graph.facebook.com https://graph.instagram.com; frame-ancestors 'none';"
+  )
+  
+  // Permissions Policy - disable unused browser features
   response.headers.set(
     'Permissions-Policy',
-    'geolocation=(), microphone=(), camera=()'
+    'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=()'
   )
 
   return response
