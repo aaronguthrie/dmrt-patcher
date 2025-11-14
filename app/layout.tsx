@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { Analytics } from '@vercel/analytics/next'
-import { BotId } from 'botid/client'
+import { BotIdClient } from 'botid/client'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -35,7 +35,7 @@ export default function RootLayout({
         <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
       </head>
       <body className="font-sans">
-        <BotId />
+        <BotIdClient protect />
         {children}
         <Analytics />
       </body>
