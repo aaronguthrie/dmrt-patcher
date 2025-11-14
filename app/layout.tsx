@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { Analytics } from '@vercel/analytics/next'
-import { BotIdClient } from 'botid/client'
+// import { BotIdClient } from 'botid/client' // Temporarily disabled due to 404 issue
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -35,7 +35,8 @@ export default function RootLayout({
         <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
       </head>
       <body className="font-sans">
-        <BotIdClient protect={[
+        {/* BotID temporarily disabled - challenge script 404 issue */}
+        {/* <BotIdClient protect={[
           { path: '/api/auth/send-link', method: 'POST' },
           { path: '/api/auth/validate', method: 'POST' },
           { path: '/api/submissions/create', method: 'POST' },
@@ -49,7 +50,7 @@ export default function RootLayout({
           { path: '/api/submissions/[id]/post', method: 'POST' },
           { path: '/api/dashboard/submissions', method: 'GET' },
           { path: '/api/dashboard/export', method: 'GET' },
-        ]} />
+        ]} /> */}
         {children}
         <Analytics />
       </body>
