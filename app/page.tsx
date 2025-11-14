@@ -145,7 +145,7 @@ export default function HomePage() {
     try {
       const formData = new FormData()
       formData.append('notes', notes)
-      formData.append('email', authenticatedEmail)
+      // Email is now taken from authenticated session, no need to send it
       photos.forEach((photo) => {
         formData.append('photos', photo)
       })

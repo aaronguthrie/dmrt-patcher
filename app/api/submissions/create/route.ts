@@ -3,7 +3,8 @@ import { prisma } from '@/lib/db'
 import { uploadPhotos } from '@/lib/blob'
 import { generatePost } from '@/lib/gemini'
 import { isBot } from '@/lib/security'
-import { validateFile, validateNotesLength, validateEmail, sanitizePromptInput } from '@/lib/validation'
+import { validateFile, validateNotesLength, sanitizePromptInput } from '@/lib/validation'
+import { requireAuth } from '@/lib/auth-middleware'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,20 +13,24 @@ export async function POST(request: NextRequest) {
     if (isBot(userAgent)) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
+
+    // Require authentication
+    const authCheck = await requireAuth(request)
+    if (authCheck instanceof NextResponse) {
+      return authCheck // Returns 401 if not authenticated
+    }
+    const session = authCheck
+
     const formData = await request.formData()
     const notes = formData.get('notes') as string
-    const email = formData.get('email') as string
     const files = formData.getAll('photos') as File[]
 
-    // Validate inputs
-    if (!notes || !email) {
-      return NextResponse.json({ error: 'Notes and email required' }, { status: 400 })
-    }
+    // Use authenticated email from session (don't trust form data)
+    const email = session.email
 
-    // Validate email format and prevent header injection
-    const emailValidation = validateEmail(email)
-    if (!emailValidation.valid) {
-      return NextResponse.json({ error: emailValidation.error }, { status: 400 })
+    // Validate inputs
+    if (!notes) {
+      return NextResponse.json({ error: 'Notes required' }, { status: 400 })
     }
 
     // Validate notes length
@@ -62,7 +67,7 @@ export async function POST(request: NextRequest) {
       data: {
         notes: sanitizedNotes,
         photoPaths,
-        submittedByEmail: email.trim(),
+        submittedByEmail: email, // Use authenticated email from session
         status: 'draft',
       },
     })
