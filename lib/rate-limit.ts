@@ -327,7 +327,16 @@ export function getRateLimiter(
   // Try Upstash Redis
   if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
     try {
-      const { Redis } = require('@upstash/redis')
+      // Check if @upstash/redis is available (optional dependency)
+      let Redis: any
+      try {
+        Redis = require('@upstash/redis').Redis
+      } catch (requireError) {
+        // Package not installed, skip Upstash Redis
+        console.warn('@upstash/redis not installed, skipping Upstash Redis rate limiting')
+        throw new Error('@upstash/redis not available')
+      }
+      
       const redis = new Redis({
         url: process.env.UPSTASH_REDIS_REST_URL,
         token: process.env.UPSTASH_REDIS_REST_TOKEN,
@@ -353,6 +362,7 @@ export function getRateLimiter(
 
 /**
  * Rate limit a request by IP address
+ * Includes security monitoring and error handling
  */
 export async function rateLimitByIP(
   ip: string,
@@ -360,11 +370,68 @@ export async function rateLimitByIP(
   windowMs: number = 15 * 60 * 1000
 ): Promise<RateLimitResult> {
   const limiter = getRateLimiter(maxRequests, windowMs)
-  return await limiter.limit(`ip:${ip}`)
+  
+  // Check if using in-memory fallback in production (security risk)
+  if (process.env.NODE_ENV === 'production') {
+    const hasPostgres = !!process.env.POSTGRES_URL
+    const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+    
+    if (!hasPostgres && !hasRedis) {
+      // Log critical security warning
+      console.error('🚨 CRITICAL SECURITY WARNING: Rate limiting using in-memory fallback in production!')
+      console.error('🚨 This will NOT work effectively in serverless environments!')
+      console.error('🚨 Please configure POSTGRES_URL (Neon) or UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN (Upstash)')
+      
+      // In production, fail closed - block requests if rate limiting backend is not configured
+      // This prevents unlimited requests when rate limiting is broken
+      // Note: This is a security measure - legitimate users may be affected until backend is configured
+      return {
+        success: false,
+        limit: maxRequests,
+        remaining: 0,
+        reset: Date.now() + windowMs,
+      }
+    }
+  }
+  
+  try {
+    const result = await limiter.limit(`ip:${ip}`)
+    
+    // Log rate limit violations for security monitoring
+    if (!result.success) {
+      console.warn(`⚠️ Rate limit exceeded for IP: ${ip} (limit: ${result.limit}, remaining: ${result.remaining})`)
+    }
+    
+    return result
+  } catch (error: any) {
+    // Log rate limiting errors
+    console.error('Rate limiting error:', error?.message || error)
+    
+    // Fail closed in production - block request if rate limiting fails
+    // This prevents bypass when rate limiting backend is down
+    if (process.env.NODE_ENV === 'production') {
+      console.error('🚨 Rate limiting backend error - blocking request for security')
+      return {
+        success: false,
+        limit: maxRequests,
+        remaining: 0,
+        reset: Date.now() + windowMs,
+      }
+    }
+    
+    // In development, fail open to allow testing
+    return {
+      success: true,
+      limit: maxRequests,
+      remaining: maxRequests - 1,
+      reset: Date.now() + windowMs,
+    }
+  }
 }
 
 /**
  * Rate limit a request by identifier (email, user ID, etc.)
+ * Includes security monitoring and error handling
  */
 export async function rateLimitByIdentifier(
   identifier: string,
@@ -372,6 +439,62 @@ export async function rateLimitByIdentifier(
   windowMs: number = 15 * 60 * 1000
 ): Promise<RateLimitResult> {
   const limiter = getRateLimiter(maxRequests, windowMs)
-  return await limiter.limit(`id:${identifier}`)
+  
+  // Check if using in-memory fallback in production (security risk)
+  if (process.env.NODE_ENV === 'production') {
+    const hasPostgres = !!process.env.POSTGRES_URL
+    const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+    
+    if (!hasPostgres && !hasRedis) {
+      // Log critical security warning
+      console.error('🚨 CRITICAL SECURITY WARNING: Rate limiting using in-memory fallback in production!')
+      console.error('🚨 This will NOT work effectively in serverless environments!')
+      
+      // In production, fail closed - block requests if rate limiting backend is not configured
+      return {
+        success: false,
+        limit: maxRequests,
+        remaining: 0,
+        reset: Date.now() + windowMs,
+      }
+    }
+  }
+  
+  try {
+    const result = await limiter.limit(`id:${identifier}`)
+    
+    // Log rate limit violations for security monitoring
+    if (!result.success) {
+      // Don't log full identifier to avoid logging sensitive data
+      const maskedId = identifier.length > 4 
+        ? `${identifier.substring(0, 2)}***${identifier.substring(identifier.length - 2)}`
+        : '***'
+      console.warn(`⚠️ Rate limit exceeded for identifier: ${maskedId} (limit: ${result.limit}, remaining: ${result.remaining})`)
+    }
+    
+    return result
+  } catch (error: any) {
+    // Log rate limiting errors
+    console.error('Rate limiting error:', error?.message || error)
+    
+    // Fail closed in production - block request if rate limiting fails
+    if (process.env.NODE_ENV === 'production') {
+      console.error('🚨 Rate limiting backend error - blocking request for security')
+      return {
+        success: false,
+        limit: maxRequests,
+        remaining: 0,
+        reset: Date.now() + windowMs,
+      }
+    }
+    
+    // In development, fail open to allow testing
+    return {
+      success: true,
+      limit: maxRequests,
+      remaining: maxRequests - 1,
+      reset: Date.now() + windowMs,
+    }
+  }
 }
 
