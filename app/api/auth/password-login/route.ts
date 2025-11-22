@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get PRO password hash from environment variable
-    const proPasswordHash = process.env.PRO_PASSWORD_HASH
+    const proPasswordHash = process.env.PRO_PASSWORD_HASH?.trim()
 
     if (!proPasswordHash) {
       console.error('PRO_PASSWORD_HASH is not set')
@@ -52,8 +52,17 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
+    // Validate hash format (bcrypt hashes start with $2a$, $2b$, or $2y$)
+    if (!proPasswordHash.match(/^\$2[ayb]\$/)) {
+      console.error('PRO_PASSWORD_HASH has invalid format. Expected bcrypt hash starting with $2a$, $2b$, or $2y$')
+      return NextResponse.json({ 
+        error: 'Server configuration error',
+        code: 'INVALID_PASSWORD_HASH_FORMAT'
+      }, { status: 500 })
+    }
+
     // Get PRO email from environment variable
-    const proEmail = process.env.PRO_EMAIL
+    const proEmail = process.env.PRO_EMAIL?.trim()
 
     if (!proEmail) {
       console.error('PRO_EMAIL is not set')
