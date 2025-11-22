@@ -38,7 +38,9 @@ A Next.js application for Donegal Mountain Rescue Team (DMRT) that transforms ra
 ### PRO Review
 
 1. PRO visits `/pro`
-2. Authenticates via magic link
+2. Authenticates via:
+   - **Password login** (recommended for frequent access)
+   - **Magic link** (sent via email)
 3. Reviews submissions with status `awaiting_pro` or `awaiting_pro_to_post`
 4. Can edit post text
 5. Either:
@@ -94,11 +96,41 @@ A Next.js application for Donegal Mountain Rescue Team (DMRT) that transforms ra
 - **feedback**: Feedback history for regenerations
 - **leader_approvals**: Team leader approval records
 
+## Environment Variables
+
+### Required
+- `PRO_EMAIL` - PRO email address
+- `PRO_PASSWORD_HASH` - Bcrypt hash of PRO password (generate with `node scripts/generate-password-hash.js`)
+- `TEAM_LEADER_EMAIL` - Team leader email(s), comma-separated
+- `APPROVED_TEAM_EMAILS` - Approved team member emails, comma-separated
+- `RESEND_API_KEY` - Resend API key
+- `RESEND_FROM_EMAIL` - Email address for sending emails
+- `POSTGRES_URL` - PostgreSQL connection string
+- `SESSION_SECRET` - Secret for JWT session signing
+- `GEMINI_API_KEY` - Google Gemini API key
+- `META_ACCESS_TOKEN` - Meta Graph API access token
+- `FACEBOOK_PAGE_ID` - Facebook page ID
+- `INSTAGRAM_BUSINESS_ACCOUNT_ID` - Instagram business account ID
+- `BLOB_READ_WRITE_TOKEN` - Vercel Blob storage token
+- `DASHBOARD_PASSWORD` - Password for transparency dashboard
+
+### Generating PRO Password Hash
+
+To set up password login for PRO:
+
+```bash
+node scripts/generate-password-hash.js "your-secure-password"
+```
+
+This will generate a bcrypt hash. Add it to your `.env` file and Vercel environment variables as `PRO_PASSWORD_HASH`.
+
 ## Security Notes
 
 - All authentication codes expire after 4 hours
 - Codes are single-use only
 - Email whitelist validation for each role
+- Password login uses bcrypt hashing (10 rounds)
+- Rate limiting on password login attempts (5 attempts per 15 minutes)
 - Dashboard password protection
 - Environment variables for sensitive data
 

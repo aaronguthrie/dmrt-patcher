@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Sparkles, Mail, Loader2, Send, CheckCircle2 } from 'lucide-react'
+import { Sparkles, Mail, Loader2, Send, CheckCircle2, Lock } from 'lucide-react'
 
 interface Submission {
   id: string
@@ -20,7 +20,9 @@ interface Submission {
 
 export default function ProPage() {
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
+  const [loginMethod, setLoginMethod] = useState<'password' | 'magic-link'>('password')
   const [authenticated, setAuthenticated] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -86,6 +88,33 @@ export default function ProPage() {
 
       setSuccess('Login link sent! Check your email.')
       setEmail('')
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loginWithPassword = async () => {
+    setLoading(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch('/api/auth/password-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to login')
+      }
+
+      setAuthenticated(true)
+      setPassword('')
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -192,58 +221,148 @@ export default function ProPage() {
             </div>
             <p className="text-gray-600">PRO Dashboard</p>
           </div>
-          <p className="text-gray-600 mb-6 text-center">
-            Enter your email to receive a login link.
-          </p>
 
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  id="email"
-                  type="email"
-                  className="input pl-10"
-                  placeholder="pro@donegalmrt.ie"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendLoginLink()}
-                />
-              </div>
-            </div>
-
-            {error && (
-              <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200">
-                {success}
-              </div>
-            )}
-
+          {/* Login method toggle */}
+          <div className="flex gap-2 mb-6 p-1 bg-gray-100 rounded-lg">
             <button
-              className="btn btn-primary w-full"
-              onClick={sendLoginLink}
-              disabled={loading || !email}
+              type="button"
+              onClick={() => {
+                setLoginMethod('password')
+                setError('')
+                setSuccess('')
+                setPassword('')
+                setEmail('')
+              }}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                loginMethod === 'password'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Mail className="inline-block mr-2 h-4 w-4" />
-                  Send Login Link
-                </>
-              )}
+              Password
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMethod('magic-link')
+                setError('')
+                setSuccess('')
+                setPassword('')
+                setEmail('')
+              }}
+              className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                loginMethod === 'magic-link'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Magic Link
             </button>
           </div>
+
+          {loginMethod === 'password' ? (
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    id="password"
+                    type="password"
+                    className="input pl-10"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && password && loginWithPassword()}
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200">
+                  {success}
+                </div>
+              )}
+
+              <button
+                className="btn btn-primary w-full"
+                onClick={loginWithPassword}
+                disabled={loading || !password}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    <Lock className="inline-block mr-2 h-4 w-4" />
+                    Login
+                  </>
+                )}
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-gray-600 mb-6 text-center">
+                Enter your email to receive a login link.
+              </p>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    id="email"
+                    type="email"
+                    className="input pl-10"
+                    placeholder="pro@donegalmrt.ie"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendLoginLink()}
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200">
+                  {success}
+                </div>
+              )}
+
+              <button
+                className="btn btn-primary w-full"
+                onClick={sendLoginLink}
+                disabled={loading || !email}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="inline-block mr-2 h-4 w-4" />
+                    Send Login Link
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     )
