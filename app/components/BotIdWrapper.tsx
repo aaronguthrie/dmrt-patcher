@@ -7,6 +7,7 @@ export default function BotIdWrapper() {
     <BotIdClient protect={[
       { path: '/api/auth/send-link', method: 'POST' },
       { path: '/api/auth/validate', method: 'POST' },
+      { path: '/api/auth/password-login', method: 'POST' },
       { path: '/api/submissions/create', method: 'POST' },
       { path: '/api/submissions/list', method: 'GET' },
       { path: '/api/submissions/[id]', method: 'GET' },
