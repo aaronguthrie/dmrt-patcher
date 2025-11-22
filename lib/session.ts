@@ -70,8 +70,21 @@ export async function getSession(): Promise<Session | null> {
       role: payload.role as Role,
       submissionId: payload.submissionId as string | undefined,
     }
-  } catch (error) {
+  } catch (error: any) {
     // Invalid token, expired, or tampered with
+    // Log JWT verification failures for security monitoring
+    if (process.env.NODE_ENV === 'production') {
+      const errorType = error?.code === 'ERR_JWT_EXPIRED' ? 'expired' 
+        : error?.code === 'ERR_JWT_INVALID' ? 'invalid'
+        : error?.code === 'ERR_JWT_CLAIM_VALIDATION_FAILED' ? 'claim-validation-failed'
+        : error?.name === 'JWTExpired' ? 'expired'
+        : error?.name === 'JWTInvalid' ? 'invalid'
+        : 'unknown'
+      
+      // Log without exposing token content
+      console.warn(`🚫 JWT verification failed: ${errorType}`)
+    }
+    
     return null
   }
 }

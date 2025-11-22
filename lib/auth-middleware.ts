@@ -17,9 +17,20 @@ export async function requireAuth(
   const session = await getSession()
   
   if (!session) {
+    // Log authentication failures for security monitoring
+    if (process.env.NODE_ENV === 'production') {
+      const ip = request.ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
+      console.warn(`🚫 Authentication required but not provided - IP: ${ip} - Path: ${request.nextUrl.pathname}`)
+    }
+    
     return NextResponse.json(
       { error: 'Authentication required' },
-      { status: 401 }
+      { 
+        status: 401,
+        headers: {
+          'X-Auth-Required': 'true', // Helps differentiate from bot blocking
+        },
+      }
     )
   }
   
@@ -36,16 +47,38 @@ export async function requireRole(
   const session = await getSession()
   
   if (!session) {
+    // Log authentication failures for security monitoring
+    if (process.env.NODE_ENV === 'production') {
+      const ip = request.ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
+      console.warn(`🚫 Authentication required but not provided - IP: ${ip} - Path: ${request.nextUrl.pathname}`)
+    }
+    
     return NextResponse.json(
       { error: 'Authentication required' },
-      { status: 401 }
+      { 
+        status: 401,
+        headers: {
+          'X-Auth-Required': 'true',
+        },
+      }
     )
   }
   
   if (!hasRole(session, requiredRole)) {
+    // Log authorization failures for security monitoring
+    if (process.env.NODE_ENV === 'production') {
+      const ip = request.ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
+      console.warn(`🚫 Authorization failed - User: ${session.email} - Required role: ${requiredRole} - IP: ${ip} - Path: ${request.nextUrl.pathname}`)
+    }
+    
     return NextResponse.json(
       { error: 'Insufficient permissions' },
-      { status: 403 }
+      { 
+        status: 403,
+        headers: {
+          'X-Authorization-Failed': 'true',
+        },
+      }
     )
   }
   
@@ -64,9 +97,20 @@ export async function checkSubmissionAccess(
   const session = await getSession()
   
   if (!session) {
+    // Log authentication failures for security monitoring
+    if (process.env.NODE_ENV === 'production') {
+      const ip = request.ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
+      console.warn(`🚫 Authentication required but not provided - IP: ${ip} - Path: ${request.nextUrl.pathname}`)
+    }
+    
     return NextResponse.json(
       { error: 'Authentication required' },
-      { status: 401 }
+      { 
+        status: 401,
+        headers: {
+          'X-Auth-Required': 'true',
+        },
+      }
     )
   }
   
@@ -85,9 +129,20 @@ export async function checkSubmissionAccess(
     return session
   }
   
+  // Log IDOR attempt for security monitoring
+  if (process.env.NODE_ENV === 'production') {
+    const ip = request.ip || request.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
+    console.warn(`🚫 IDOR attempt blocked - User: ${session.email} - Attempted access to: ${submissionEmail} - IP: ${ip} - Path: ${request.nextUrl.pathname}`)
+  }
+  
   return NextResponse.json(
     { error: 'Access denied' },
-    { status: 403 }
+    { 
+      status: 403,
+      headers: {
+        'X-Access-Denied': 'true',
+      },
+    }
   )
 }
 

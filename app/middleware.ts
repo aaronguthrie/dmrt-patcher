@@ -10,10 +10,16 @@ export function middleware(request: NextRequest) {
   // Block bots
   const userAgent = request.headers.get('user-agent')
   if (isBot(userAgent)) {
+    // Log bot detection attempts for security monitoring
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(`🚫 Bot detected: ${userAgent?.substring(0, 50) || 'no user-agent'} - IP: ${request.ip || 'unknown'}`)
+    }
+    
     return new NextResponse('Access Denied', { 
       status: 403,
       headers: {
         'X-Robots-Tag': 'noindex, nofollow',
+        'X-Blocked-Reason': 'bot-detection', // Helps differentiate from auth failures
       },
     })
   }
@@ -32,6 +38,11 @@ export function middleware(request: NextRequest) {
     // - Otherwise, don't set CORS headers (browsers will block cross-origin requests)
     const isSameOrigin = !origin || origin === serverOrigin
     
+    // Log CORS violation attempts for security monitoring
+    if (origin && origin !== serverOrigin && process.env.NODE_ENV === 'production') {
+      console.warn(`🚫 CORS violation attempt from origin: ${origin} - IP: ${request.ip || 'unknown'} - Path: ${pathname}`)
+    }
+    
     if (request.method === 'OPTIONS') {
       // Handle preflight requests
       // Only respond to same-origin preflight requests
@@ -49,7 +60,16 @@ export function middleware(request: NextRequest) {
         })
       } else {
         // Block cross-origin preflight requests
-        return new NextResponse(null, { status: 403 })
+        // Log the violation attempt
+        if (process.env.NODE_ENV === 'production') {
+          console.warn(`🚫 CORS preflight blocked from origin: ${origin} - IP: ${request.ip || 'unknown'}`)
+        }
+        return new NextResponse(null, { 
+          status: 403,
+          headers: {
+            'X-Blocked-Reason': 'cors-violation',
+          },
+        })
       }
     }
 
