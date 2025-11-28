@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
 import BotIdWrapper from './components/BotIdWrapper'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'DMRT Postal Service',
-  description: 'DMRT Postal Service',
+  title: 'Patcher by DMRT',
+  description: 'Patcher by DMRT',
   robots: {
     index: false,
     follow: false,
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={GeistSans.variable}>
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
         <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />

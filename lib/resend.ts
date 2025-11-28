@@ -32,7 +32,7 @@ function getFromEmail(): string {
     throw new Error('RESEND_FROM_EMAIL is not set')
   }
   // Format as "Display Name <email@domain.com>"
-  return `DMRT Postal Service <${email}>`
+  return `Patcher by DMRT <${email}>`
 }
 
 export async function sendMagicLink(
@@ -63,7 +63,7 @@ export async function sendMagicLink(
     to: email,
     subject: 'Your login link',
     html: `
-      <p>Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
+      <p>Please use the link below to securely access Patcher by DMRT. This link will expire in 4 hours.</p>
       <p>Do not share this link with anyone else.</p>
       <p><a href="${link}">${link}</a></p>
     `,
@@ -83,7 +83,7 @@ export async function notifyPRO(submissionId: string, code: string): Promise<voi
     to: process.env.PRO_EMAIL!,
     subject: 'Awaiting your review',
     html: `
-      <p>A social media post is awaiting your review. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
+      <p>A social media post is awaiting your review. Please use the link below to securely access Patcher by DMRT. This link will expire in 4 hours.</p>
       <p><a href="${link}">Review pending posts</a></p>
     `,
   })
@@ -106,7 +106,7 @@ export async function notifyTeamLeader(submissionId: string, code: string): Prom
     to: leaderEmails,
     subject: 'Awaiting your approval',
     html: `
-      <p>A social media post is awaiting your approval. Please use the link below to securely access the DMRT Postal Service. This link will expire in 4 hours.</p>
+      <p>A social media post is awaiting your approval. Please use the link below to securely access Patcher by DMRT. This link will expire in 4 hours.</p>
       <p><a href="${link}">Review and approve</a></p>
     `,
   })

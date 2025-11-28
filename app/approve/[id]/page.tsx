@@ -2,7 +2,8 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
-import { Sparkles, Loader2, CheckCircle2, XCircle, X } from 'lucide-react'
+import { Loader2, CheckCircle2, XCircle, X } from 'lucide-react'
+import Logo from '../../components/Logo'
 
 function ApprovePageContent() {
   const params = useParams()
@@ -146,11 +147,9 @@ function ApprovePageContent() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card w-full max-w-md">
           <div className="text-center mb-6">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-            </div>
-            <p className="text-gray-600">Team Leader Approval</p>
+            <Logo className="mb-6" />
+            <p className="text-gray-700 text-lg font-medium">From rough notes → ready to post</p>
+            <p className="text-gray-600 mt-4">Team Leader Approval</p>
           </div>
           {error && (
             <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 mb-4">
@@ -179,10 +178,7 @@ function ApprovePageContent() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card w-full max-w-2xl text-center">
           <div className="mb-6">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-            </div>
+            <Logo className="mb-6" />
             <div className="flex justify-center mb-6">
               <div className="relative">
                 {actionType === 'approved' ? (
@@ -211,10 +207,8 @@ function ApprovePageContent() {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-            <h1 className="text-4xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-          </div>
+          <Logo className="mb-4" />
+          <p className="text-gray-700 text-lg font-medium mb-2">From rough notes → ready to post</p>
           <p className="text-gray-600 text-lg">Team Leader Approval</p>
         </div>
 

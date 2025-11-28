@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Logo from '../components/Logo'
 
 interface Submission {
   id: string
@@ -102,8 +103,9 @@ export default function DashboardPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card w-full max-w-md">
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-gradient-purple mb-2">DMRT Postal Service</h1>
-            <p className="text-gray-600">Transparency Dashboard</p>
+            <Logo className="mb-6" />
+            <p className="text-gray-700 text-lg font-medium">From rough notes → ready to post</p>
+            <p className="text-gray-600 mt-4">Transparency Dashboard</p>
           </div>
           <p className="text-gray-600 mb-6 text-center">
             Enter the dashboard password to continue.

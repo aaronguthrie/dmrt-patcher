@@ -3,7 +3,8 @@
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { CheckCircle2, Sparkles, ArrowRight } from 'lucide-react'
+import { CheckCircle2, ArrowRight } from 'lucide-react'
+import Logo from '../components/Logo'
 
 function ThankYouContent() {
   const searchParams = useSearchParams()
@@ -13,10 +14,7 @@ function ThankYouContent() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="card w-full max-w-2xl text-center">
         <div className="mb-6">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-            <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-          </div>
+          <Logo className="mb-6" />
           <div className="flex justify-center mb-6">
             <div className="relative">
               <CheckCircle2 className="h-20 w-20 text-green-500" />

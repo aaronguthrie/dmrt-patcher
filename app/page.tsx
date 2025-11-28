@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Sparkles, Wand2, Image as ImageIcon, Send, Loader2, X, Mail, Info } from 'lucide-react'
+import { Wand2, Image as ImageIcon, Send, Loader2, X, Mail, Info } from 'lucide-react'
 import PromptModal from './components/PromptModal'
+import Logo from './components/Logo'
 
 interface Submission {
   id: string
@@ -233,11 +234,9 @@ export default function HomePage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card w-full max-w-md">
           <div className="text-center mb-6">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-            </div>
-            <p className="text-gray-600">Enter your email to receive a login link</p>
+            <Logo className="mb-6" />
+            <p className="text-gray-700 text-lg font-medium">From rough notes → ready to post</p>
+            <p className="text-gray-600 mt-4">Enter your email to receive a login link</p>
           </div>
 
           <div className="space-y-4">
@@ -297,10 +296,8 @@ export default function HomePage() {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-            <h1 className="text-4xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-          </div>
+          <Logo className="mb-4" />
+          <p className="text-gray-700 text-lg font-medium mb-2">From rough notes → ready to post</p>
           <p className="text-gray-600">Transform your notes into polished social media posts</p>
         </div>
 
@@ -409,7 +406,6 @@ export default function HomePage() {
             <div className="card card-ai">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-purple-600 animate-sparkle" />
                   <h2 className="text-2xl font-semibold text-gray-900">AI-Generated Post</h2>
                 </div>
                 <div className="flex items-center gap-3">

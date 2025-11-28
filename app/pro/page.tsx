@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Sparkles, Mail, Loader2, Send, CheckCircle2, Lock } from 'lucide-react'
+import { Mail, Loader2, Send, CheckCircle2, Lock } from 'lucide-react'
+import Logo from './components/Logo'
 
 interface Submission {
   id: string
@@ -215,11 +216,9 @@ export default function ProPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card w-full max-w-md">
           <div className="text-center mb-6">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-              <h1 className="text-3xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-            </div>
-            <p className="text-gray-600">PRO Dashboard</p>
+            <Logo className="mb-6" />
+            <p className="text-gray-700 text-lg font-medium">From rough notes → ready to post</p>
+            <p className="text-gray-600 mt-4">PRO Dashboard</p>
           </div>
 
           {/* Login method toggle */}
@@ -373,10 +372,8 @@ export default function ProPage() {
       <div className="max-w-6xl mx-auto">
         <div className="card mb-8">
           <div className="text-center mb-6">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Sparkles className="h-6 w-6 text-purple-600 animate-sparkle" />
-              <h1 className="text-4xl font-bold text-gradient-purple">DMRT Postal Service</h1>
-            </div>
+            <Logo className="mb-4" />
+            <p className="text-gray-700 text-lg font-medium mb-2">From rough notes → ready to post</p>
             <p className="text-gray-600 text-lg">PRO Dashboard</p>
             <p className="text-gray-500 mt-2">Review and post submissions</p>
           </div>
