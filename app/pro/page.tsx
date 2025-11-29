@@ -32,6 +32,8 @@ export default function ProPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editedTexts, setEditedTexts] = useState<Record<string, string>>({})
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -208,6 +210,30 @@ export default function ProPage() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const deleteSubmission = async (id: string) => {
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/dashboard/submissions/${id}`, {
+        method: 'DELETE',
+        credentials: 'include', // Include cookies for session authentication
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to delete submission')
+      }
+
+      // Remove from local state
+      setSubmissions(submissions.filter(sub => sub.id !== id))
+      setDeleteConfirmId(null)
+      setSuccess('Submission deleted successfully')
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete submission')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -458,55 +484,86 @@ export default function ProPage() {
                   </div>
                 )}
 
-                <div className="flex gap-3 pt-4 border-t border-gray-200">
-                  {editingId === submission.id ? (
-                    <>
+                <div className="flex gap-3 pt-4 border-t border-gray-200 items-center justify-between">
+                  <div className="flex gap-3 flex-1">
+                    {editingId === submission.id ? (
+                      <>
+                        <button
+                          className="btn btn-primary flex-1"
+                          onClick={() => handlePostNow(submission.id)}
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                              Posting...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="inline-block mr-2 h-4 w-4" />
+                              Post Now
+                            </>
+                          )}
+                        </button>
+                        <button
+                          className="btn btn-secondary flex-1"
+                          onClick={() => handleSendForApproval(submission.id)}
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            'Send to Team Leader'
+                          )}
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => setEditingId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
                       <button
-                        className="btn btn-primary flex-1"
-                        onClick={() => handlePostNow(submission.id)}
-                        disabled={loading}
+                        className="btn btn-primary"
+                        onClick={() => handleEdit(submission)}
                       >
-                        {loading ? (
-                          <>
-                            <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
-                            Posting...
-                          </>
-                        ) : (
-                          <>
-                            <Send className="inline-block mr-2 h-4 w-4" />
-                            Post Now
-                          </>
-                        )}
+                        Edit & Post
                       </button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {deleteConfirmId === submission.id ? (
+                      <>
+                        <span className="text-xs text-red-600">Confirm?</span>
+                        <button
+                          onClick={() => deleteSubmission(submission.id)}
+                          disabled={deletingId === submission.id}
+                          className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {deletingId === submission.id ? 'Deleting...' : 'Yes'}
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirmId(null)}
+                          disabled={deletingId === submission.id}
+                          className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md disabled:opacity-50"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
                       <button
-                        className="btn btn-secondary flex-1"
-                        onClick={() => handleSendForApproval(submission.id)}
-                        disabled={loading}
+                        onClick={() => setDeleteConfirmId(submission.id)}
+                        disabled={deletingId !== null}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {loading ? (
-                          <>
-                            <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
-                            Sending...
-                          </>
-                        ) : (
-                          'Send to Team Leader'
-                        )}
+                        Delete
                       </button>
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => setEditingId(null)}
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleEdit(submission)}
-                    >
-                      Edit & Post
-                    </button>
-                  )}
+                    )}
+                  </div>
                 </div>
 
                 {(submission.postedToFacebook || submission.postedToInstagram) && (
