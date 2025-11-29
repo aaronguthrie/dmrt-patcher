@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import { Loader2, CheckCircle2, XCircle, X } from 'lucide-react'
 import Logo from '../../components/Logo'
+import AuthLoadingScreen from '../../components/AuthLoadingScreen'
 
 function ApprovePageContent() {
   const params = useParams()
@@ -19,14 +20,17 @@ function ApprovePageContent() {
   const [showRejectForm, setShowRejectForm] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [actionType, setActionType] = useState<'approved' | 'rejected' | null>(null)
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
 
   useEffect(() => {
     const code = searchParams.get('code')
     if (code) {
+      setIsAuthenticating(true)
       validateCode(code)
     } else {
       setError('No authorization code provided')
       setLoading(false)
+      setIsAuthenticating(false)
     }
   }, [searchParams])
 
@@ -52,8 +56,12 @@ function ApprovePageContent() {
       }
 
       setAuthenticated(true)
+      setIsAuthenticating(false)
+      // Clear the code from URL for cleaner UX
+      window.history.replaceState({}, '', window.location.pathname)
     } catch (err: any) {
       setError('Link expired or invalid')
+      setIsAuthenticating(false)
     } finally {
       setLoading(false)
     }
@@ -131,20 +139,9 @@ function ApprovePageContent() {
     }
   }
 
-  if (loading && !authenticated) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-4">
-            <Logo className="mb-4" size={200} />
-          </div>
-          <div className="card text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
-            <p className="text-gray-600">Validating authorization...</p>
-          </div>
-        </div>
-      </div>
-    )
+  // Show dedicated authentication loading screen when authenticating
+  if (isAuthenticating) {
+    return <AuthLoadingScreen error={error} />
   }
 
   if (!authenticated) {
@@ -356,19 +353,7 @@ function ApprovePageContent() {
 
 export default function ApprovePage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-4">
-            <Logo className="mb-4" size={200} />
-          </div>
-          <div className="card text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
-            <p className="text-gray-600">Loading...</p>
-          </div>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<AuthLoadingScreen />}>
       <ApprovePageContent />
     </Suspense>
   )

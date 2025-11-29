@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Wand2, Image as ImageIcon, Send, Loader2, X, Mail, Info } from 'lucide-react'
 import PromptModal from './components/PromptModal'
 import Logo from './components/Logo'
+import AuthLoadingScreen from './components/AuthLoadingScreen'
 
 interface Submission {
   id: string
@@ -19,6 +20,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
 
   const [notes, setNotes] = useState('')
   const [photos, setPhotos] = useState<File[]>([])
@@ -32,6 +34,7 @@ export default function HomePage() {
     const params = new URLSearchParams(window.location.search)
     const urlCode = params.get('code')
     if (urlCode) {
+      setIsAuthenticating(true)
       validateCode(urlCode, 'team_member')
     }
   }, [])
@@ -126,8 +129,12 @@ export default function HomePage() {
       setAuthenticated(true)
       setAuthenticatedEmail(data.email || '')
       setCode(codeToValidate)
+      setIsAuthenticating(false)
+      // Clear the code from URL for cleaner UX
+      window.history.replaceState({}, '', window.location.pathname)
     } catch (err: any) {
       setError(err.message)
+      setIsAuthenticating(false)
     } finally {
       setLoading(false)
     }
@@ -227,6 +234,11 @@ export default function HomePage() {
       setError(err.message)
       setLoading(false)
     }
+  }
+
+  // Show dedicated authentication loading screen when authenticating
+  if (isAuthenticating) {
+    return <AuthLoadingScreen error={error} />
   }
 
   if (!authenticated) {

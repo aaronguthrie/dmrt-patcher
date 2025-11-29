@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Mail, Loader2, Send, CheckCircle2, Lock } from 'lucide-react'
 import Logo from '../components/Logo'
+import AuthLoadingScreen from '../components/AuthLoadingScreen'
 
 interface Submission {
   id: string
@@ -28,6 +29,7 @@ export default function ProPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [isAuthenticating, setIsAuthenticating] = useState(false)
 
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -39,6 +41,7 @@ export default function ProPage() {
     const params = new URLSearchParams(window.location.search)
     const urlCode = params.get('code')
     if (urlCode) {
+      setIsAuthenticating(true)
       validateCode(urlCode, 'pro')
     }
   }, [])
@@ -144,8 +147,12 @@ export default function ProPage() {
 
       setAuthenticated(true)
       setCode(codeToValidate)
+      setIsAuthenticating(false)
+      // Clear the code from URL for cleaner UX
+      window.history.replaceState({}, '', window.location.pathname)
     } catch (err: any) {
       setError(err.message)
+      setIsAuthenticating(false)
     } finally {
       setLoading(false)
     }
@@ -235,6 +242,11 @@ export default function ProPage() {
     } finally {
       setDeletingId(null)
     }
+  }
+
+  // Show dedicated authentication loading screen when authenticating
+  if (isAuthenticating) {
+    return <AuthLoadingScreen error={error} />
   }
 
   if (!authenticated) {
