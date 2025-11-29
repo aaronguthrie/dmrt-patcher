@@ -72,6 +72,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         
         {/* Microsoft Tiles */}
+        <meta name="msapplication-config" content="/browserconfig.xml" />
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
         
