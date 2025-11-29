@@ -8,7 +8,7 @@
           "value": "post.dmrt.ie"
         }
       ],
-      "destination": "https://patcher.dmrt.ie/:1",
+      "destination": "https://patcher.dmrt.ie/$1",
       "permanent": true
     }
   ],
