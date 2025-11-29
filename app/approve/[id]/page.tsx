@@ -133,10 +133,15 @@ function ApprovePageContent() {
 
   if (loading && !authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card w-full max-w-md text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
-          <p className="text-gray-600">Validating authorization...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-4">
+            <Logo className="mb-4" size={200} />
+          </div>
+          <div className="card text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
+            <p className="text-gray-600">Validating authorization...</p>
+          </div>
         </div>
       </div>
     )
@@ -173,10 +178,15 @@ function ApprovePageContent() {
 
   if (!submission) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card w-full max-w-md text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
-          <p className="text-gray-600">Loading submission...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-4">
+            <Logo className="mb-4" size={200} />
+          </div>
+          <div className="card text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
+            <p className="text-gray-600">Loading submission...</p>
+          </div>
         </div>
       </div>
     )
@@ -185,18 +195,19 @@ function ApprovePageContent() {
   // Show confirmation page after approval/rejection
   if (completed) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card w-full max-w-2xl text-center">
-          <div className="mb-6">
-            <Logo className="mb-6" />
-            <div className="flex justify-center mb-6">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-4">
+            <Logo className="mb-4" size={200} />
+          </div>
+          <div className="card text-center">
+            <div className="flex justify-center mb-4">
               <div className="relative">
                 {actionType === 'approved' ? (
-                  <CheckCircle2 className="h-20 w-20 text-green-500" />
+                  <CheckCircle2 className="h-16 w-16 text-green-500" />
                 ) : (
-                  <XCircle className="h-20 w-20 text-red-500" />
+                  <XCircle className="h-16 w-16 text-red-500" />
                 )}
-                <div className={`absolute inset-0 ${actionType === 'approved' ? 'bg-green-500/20' : 'bg-red-500/20'} rounded-full animate-ping`} />
               </div>
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">
@@ -351,10 +362,15 @@ function ApprovePageContent() {
 export default function ApprovePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="card w-full max-w-md text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
-          <p className="text-gray-600">Loading...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-4">
+            <Logo className="mb-4" size={200} />
+          </div>
+          <div className="card text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-gray-600" />
+            <p className="text-gray-600">Loading...</p>
+          </div>
         </div>
       </div>
     }>
