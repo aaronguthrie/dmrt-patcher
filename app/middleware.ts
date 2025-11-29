@@ -125,7 +125,7 @@ export const config = {
      * 
      * Note: API routes are now included to set proper CORS headers
      */
-    '/((?!_next/static|_next/image|favicon.ico|logo-icon.png|manifest.json|logo.png|apple-icon.png|icon.png).*)',
+    '/((?!_next/static|_next/image|favicon.ico|logo-icon.png|manifest.json|logo.png|apple-icon.png|icon.png|apple-icon-|android-icon-|favicon-|ms-icon-).*)',
   ],
 }
 
