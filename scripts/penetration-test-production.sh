@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # HackerOne-Style Production Penetration Testing Script
-# Tests the live production application at https://post.dmrt.ie
+# Tests the live production application at https://patcher.dmrt.ie
 # Run with: bash scripts/penetration-test-production.sh
 
 set -euo pipefail
@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Production URL
-BASE_URL="https://post.dmrt.ie"
+BASE_URL="https://patcher.dmrt.ie"
 API_BASE="${BASE_URL}/api"
 
 # Test results

@@ -31,6 +31,8 @@ export default function DashboardPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   useEffect(() => {
     if (authenticated) {
@@ -57,6 +59,8 @@ export default function DashboardPage() {
       }
 
       setAuthenticated(true)
+      setPassword('') // Clear the input field
+      // Password no longer needed - session is now created server-side
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -70,11 +74,17 @@ export default function DashboardPage() {
       if (search) params.append('search', search)
       if (statusFilter) params.append('status', statusFilter)
 
-      const response = await fetch(`/api/dashboard/submissions?${params}`)
+      const response = await fetch(`/api/dashboard/submissions?${params}`, {
+        credentials: 'include', // Include cookies for session authentication
+      })
       const data = await response.json()
 
       if (response.ok) {
         setSubmissions(data.submissions)
+      } else if (response.status === 401) {
+        // Session expired, require re-authentication
+        setAuthenticated(false)
+        setError('Session expired. Please log in again.')
       }
     } catch (err) {
       console.error('Error loading submissions:', err)
@@ -95,6 +105,29 @@ export default function DashboardPage() {
       document.body.removeChild(a)
     } catch (err) {
       console.error('Error exporting CSV:', err)
+    }
+  }
+
+  const deleteSubmission = async (id: string) => {
+    setDeletingId(id)
+    try {
+      const response = await fetch(`/api/dashboard/submissions/${id}`, {
+        method: 'DELETE',
+        credentials: 'include', // Include cookies for session authentication
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to delete submission')
+      }
+
+      // Remove from local state
+      setSubmissions(submissions.filter(sub => sub.id !== id))
+      setDeleteConfirmId(null)
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete submission')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -196,6 +229,7 @@ export default function DashboardPage() {
                 <th style={{ padding: '0.75rem', textAlign: 'left' }}>PRO Edits</th>
                 <th style={{ padding: '0.75rem', textAlign: 'left' }}>Approval</th>
                 <th style={{ padding: '0.75rem', textAlign: 'left' }}>Posted</th>
+                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -270,6 +304,61 @@ export default function DashboardPage() {
                       </div>
                     ) : (
                       'No'
+                    )}
+                  </td>
+                  <td style={{ padding: '0.75rem' }}>
+                    {deleteConfirmId === sub.id ? (
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.875rem', color: '#dc2626' }}>Confirm?</span>
+                        <button
+                          onClick={() => deleteSubmission(sub.id)}
+                          disabled={deletingId === sub.id}
+                          style={{
+                            padding: '0.25rem 0.5rem',
+                            fontSize: '0.875rem',
+                            backgroundColor: '#dc2626',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '0.25rem',
+                            cursor: deletingId === sub.id ? 'not-allowed' : 'pointer',
+                            opacity: deletingId === sub.id ? 0.5 : 1,
+                          }}
+                        >
+                          {deletingId === sub.id ? 'Deleting...' : 'Yes'}
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirmId(null)}
+                          disabled={deletingId === sub.id}
+                          style={{
+                            padding: '0.25rem 0.5rem',
+                            fontSize: '0.875rem',
+                            backgroundColor: '#6b7280',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '0.25rem',
+                            cursor: deletingId === sub.id ? 'not-allowed' : 'pointer',
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setDeleteConfirmId(sub.id)}
+                        disabled={deletingId !== null}
+                        style={{
+                          padding: '0.25rem 0.5rem',
+                          fontSize: '0.875rem',
+                          backgroundColor: '#dc2626',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.25rem',
+                          cursor: deletingId !== null ? 'not-allowed' : 'pointer',
+                          opacity: deletingId !== null ? 0.5 : 1,
+                        }}
+                      >
+                        Delete
+                      </button>
                     )}
                   </td>
                 </tr>

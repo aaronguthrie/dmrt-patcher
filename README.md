@@ -26,7 +26,7 @@ A Next.js application for Donegal Mountain Rescue Team (DMRT) that transforms ra
 
 ### Team Member Submission
 
-1. Team member visits `post.dmrt.ie`
+1. Team member visits `patcher.dmrt.ie`
 2. Enters email (must be in `APPROVED_TEAM_EMAILS`)
 3. Receives magic link via email
 4. Clicks link to authenticate

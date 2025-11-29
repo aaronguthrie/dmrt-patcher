@@ -13,8 +13,8 @@ const { URL } = require('url');
 
 // Configuration
 const CONFIG = {
-    BASE_URL: 'https://post.dmrt.ie',
-    API_BASE: 'https://post.dmrt.ie/api',
+    BASE_URL: 'https://patcher.dmrt.ie',
+    API_BASE: 'https://patcher.dmrt.ie/api',
     TIMEOUT: 10000,
     RATE_LIMIT_TEST_COUNT: 10,
     RATE_LIMIT_DELAY: 500, // ms
