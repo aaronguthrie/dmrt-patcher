@@ -216,8 +216,8 @@ export default function DashboardPage() {
           </select>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div style={{ overflowX: 'auto', minWidth: '100%' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1200px' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
                 <th style={{ padding: '0.75rem', textAlign: 'left' }}>Date</th>
@@ -229,7 +229,7 @@ export default function DashboardPage() {
                 <th style={{ padding: '0.75rem', textAlign: 'left' }}>PRO Edits</th>
                 <th style={{ padding: '0.75rem', textAlign: 'left' }}>Approval</th>
                 <th style={{ padding: '0.75rem', textAlign: 'left' }}>Posted</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Actions</th>
+                <th style={{ padding: '0.75rem', textAlign: 'left', position: 'sticky', right: 0, backgroundColor: 'white', zIndex: 10 }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -306,22 +306,24 @@ export default function DashboardPage() {
                       'No'
                     )}
                   </td>
-                  <td style={{ padding: '0.75rem' }}>
+                  <td style={{ padding: '0.75rem', position: 'sticky', right: 0, backgroundColor: 'white', zIndex: 5, minWidth: '120px' }}>
                     {deleteConfirmId === sub.id ? (
-                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.875rem', color: '#dc2626' }}>Confirm?</span>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.875rem', color: '#dc2626', fontWeight: '500' }}>Confirm?</span>
                         <button
                           onClick={() => deleteSubmission(sub.id)}
                           disabled={deletingId === sub.id}
                           style={{
-                            padding: '0.25rem 0.5rem',
+                            padding: '0.375rem 0.75rem',
                             fontSize: '0.875rem',
+                            fontWeight: '500',
                             backgroundColor: '#dc2626',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '0.25rem',
+                            borderRadius: '0.375rem',
                             cursor: deletingId === sub.id ? 'not-allowed' : 'pointer',
                             opacity: deletingId === sub.id ? 0.5 : 1,
+                            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
                           }}
                         >
                           {deletingId === sub.id ? 'Deleting...' : 'Yes'}
@@ -330,13 +332,15 @@ export default function DashboardPage() {
                           onClick={() => setDeleteConfirmId(null)}
                           disabled={deletingId === sub.id}
                           style={{
-                            padding: '0.25rem 0.5rem',
+                            padding: '0.375rem 0.75rem',
                             fontSize: '0.875rem',
+                            fontWeight: '500',
                             backgroundColor: '#6b7280',
                             color: 'white',
                             border: 'none',
-                            borderRadius: '0.25rem',
+                            borderRadius: '0.375rem',
                             cursor: deletingId === sub.id ? 'not-allowed' : 'pointer',
+                            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
                           }}
                         >
                           Cancel
@@ -347,14 +351,17 @@ export default function DashboardPage() {
                         onClick={() => setDeleteConfirmId(sub.id)}
                         disabled={deletingId !== null}
                         style={{
-                          padding: '0.25rem 0.5rem',
+                          padding: '0.375rem 0.75rem',
                           fontSize: '0.875rem',
+                          fontWeight: '500',
                           backgroundColor: '#dc2626',
                           color: 'white',
                           border: 'none',
-                          borderRadius: '0.25rem',
+                          borderRadius: '0.375rem',
                           cursor: deletingId !== null ? 'not-allowed' : 'pointer',
                           opacity: deletingId !== null ? 0.5 : 1,
+                          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                          width: '100%',
                         }}
                       >
                         Delete
