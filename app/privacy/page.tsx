@@ -131,7 +131,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">8. Children's Privacy</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">8. Children&apos;s Privacy</h2>
             <p className="text-gray-700">
               Patcher is intended for use by DMRT team members, PRO, and team leaders only. We do not knowingly collect personal information from children under 16. If you believe we have collected information from a child, please contact us immediately.
             </p>
