@@ -2,6 +2,20 @@ const { withBotId } = require('botid/next/config')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // BotId configuration
+  botId: {
+    exclude: [
+      '/apple-touch-icon.png',
+      '/apple-icon.png',
+      '/icon.png',
+      '/favicon.ico',
+      '/favicon-32x32.png',
+      '/android-icon-192x192.png',
+      '/manifest.json',
+      '/logo.png',
+      '/robots.txt',
+    ],
+  },
   images: {
     remotePatterns: [
       {
@@ -72,7 +86,4 @@ const nextConfig = {
   },
 }
 
-// Temporarily disable BotId wrapper to test if it's blocking static files
-// BotId client-side protection is still active via BotIdWrapper component
-module.exports = nextConfig
-// module.exports = withBotId(nextConfig)
+module.exports = withBotId(nextConfig)

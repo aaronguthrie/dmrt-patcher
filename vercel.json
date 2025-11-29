@@ -17,21 +17,6 @@
       "source": "/",
       "destination": "/"
     }
-  ],
-  "headers": [
-    {
-      "source": "/(apple-touch-icon|apple-icon|icon|favicon|android-icon|ms-icon).*\\.(png|ico)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex"
-        }
-      ]
-    }
   ]
 }
 
