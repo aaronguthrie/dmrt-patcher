@@ -297,7 +297,6 @@ export default function HomePage() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <Logo className="mb-4" />
-          <p className="text-gray-700 text-lg font-medium mb-2">From rough notes → ready to post</p>
           <p className="text-gray-600">Transform your notes into polished social media posts</p>
         </div>
 
