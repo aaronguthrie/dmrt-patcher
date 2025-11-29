@@ -8,6 +8,20 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Patcher by DMRT',
   description: 'Patcher by DMRT',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Patcher',
+  },
+  icons: {
+    icon: [
+      { url: '/logo-icon.png', sizes: 'any', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/logo-icon.png', sizes: 'any', type: 'image/png' },
+    ],
+  },
   robots: {
     index: false,
     follow: false,
@@ -41,6 +55,10 @@ export default function RootLayout({
         <meta name="facebookexternalhit" content="noindex, nofollow" />
         <meta name="twitterbot" content="noindex, nofollow" />
         <meta name="linkedinbot" content="noindex, nofollow" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Patcher" />
       </head>
       <body className="font-sans">
         <BotIdWrapper />
