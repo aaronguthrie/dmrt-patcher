@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Mail, Loader2, Send, CheckCircle2, Lock } from 'lucide-react'
-import Logo from './components/Logo'
+import Logo from '../components/Logo'
 
 interface Submission {
   id: string
