@@ -289,12 +289,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-6 text-center text-xs text-gray-600">
-            <p className="mb-1.5">Patcher is a service from Donegal Mountain Rescue Team</p>
-            <p>
-              <a href="/privacy" className="hover:text-gray-900 underline">Privacy</a>
-              {' • '}
-              <a href="/terms" className="hover:text-gray-900 underline">Terms</a>
-            </p>
+            <p>Patcher is a service from Donegal Mountain Rescue Team</p>
           </div>
         </div>
       </div>
@@ -516,6 +511,15 @@ export default function HomePage() {
             </div>
           </div>
         )}
+        
+        <div className="mt-8 text-center text-xs text-gray-600">
+          <p className="mb-1.5">Patcher is a service from Donegal Mountain Rescue Team</p>
+          <p>
+            <a href="/privacy" className="hover:text-gray-900 underline">Privacy</a>
+            {' • '}
+            <a href="/terms" className="hover:text-gray-900 underline">Terms</a>
+          </p>
+        </div>
       </div>
 
       <PromptModal 

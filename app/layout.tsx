@@ -31,9 +31,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
-        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
-        <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+        <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />
+        <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />
         <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+        <meta name="slurp" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+        <meta name="duckduckbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+        <meta name="baiduspider" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+        <meta name="yandex" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+        <meta name="facebookexternalhit" content="noindex, nofollow" />
+        <meta name="twitterbot" content="noindex, nofollow" />
+        <meta name="linkedinbot" content="noindex, nofollow" />
       </head>
       <body className="font-sans">
         <BotIdWrapper />
