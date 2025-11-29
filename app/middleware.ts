@@ -121,11 +121,11 @@ export const config = {
      * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * - favicon.ico, logo-icon.png, manifest.json (static assets)
      * 
      * Note: API routes are now included to set proper CORS headers
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|logo-icon.png|manifest.json|logo.png|apple-icon.png|icon.png).*)',
   ],
 }
 

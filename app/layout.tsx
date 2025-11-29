@@ -16,11 +16,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/logo-icon.png', sizes: '1250x1250', type: 'image/png' },
-      { url: '/logo-icon.png', type: 'image/png' },
+      { url: '/logo-icon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/logo-icon.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
-      { url: '/logo-icon.png', sizes: '1250x1250', type: 'image/png' },
+      { url: '/logo-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: [
+      { url: '/logo-icon.png', type: 'image/png' },
     ],
   },
   robots: {
@@ -46,9 +49,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
-        <link rel="icon" href="/logo-icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />
         <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />
         <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
