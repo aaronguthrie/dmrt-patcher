@@ -213,13 +213,14 @@ export default function ProPage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card w-full max-w-md">
-          <div className="text-center mb-6">
-            <Logo className="mb-6" />
-            <p className="text-gray-700 text-lg font-medium">From rough notes → ready to post</p>
-            <p className="text-gray-600 mt-4">PRO Dashboard</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-4">
+            <Logo className="mb-4" size={200} />
+            <p className="text-gray-700 text-base font-medium">From rough notes → ready to post</p>
+            <p className="text-gray-600 mt-3">PRO Dashboard</p>
           </div>
+          <div className="card">
 
           {/* Login method toggle */}
           <div className="flex gap-2 mb-6 p-1 bg-gray-100 rounded-lg">
@@ -310,9 +311,6 @@ export default function ProPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-gray-600 mb-6 text-center">
-                Enter your email to receive a login link.
-              </p>
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -362,6 +360,15 @@ export default function ProPage() {
               </button>
             </div>
           )}
+          </div>
+          <div className="mt-6 text-center text-xs text-gray-600">
+            <p className="mb-1.5">Patcher is a service from Donegal Mountain Rescue Team</p>
+            <p>
+              <a href="/privacy" className="hover:text-gray-900 underline">Privacy</a>
+              {' • '}
+              <a href="/terms" className="hover:text-gray-900 underline">Terms</a>
+            </p>
+          </div>
         </div>
       </div>
     )
@@ -371,11 +378,11 @@ export default function ProPage() {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="card mb-8">
-          <div className="text-center mb-6">
-            <Logo className="mb-4" />
-            <p className="text-gray-700 text-lg font-medium mb-2">From rough notes → ready to post</p>
-            <p className="text-gray-600 text-lg">PRO Dashboard</p>
-            <p className="text-gray-500 mt-2">Review and post submissions</p>
+          <div className="text-center mb-4">
+            <Logo className="mb-3" size={120} />
+            <p className="text-gray-700 text-base font-medium mb-1.5">From rough notes → ready to post</p>
+            <p className="text-gray-600 text-base">PRO Dashboard</p>
+            <p className="text-gray-500 mt-1.5 text-sm">Review and post submissions</p>
           </div>
 
           {error && (

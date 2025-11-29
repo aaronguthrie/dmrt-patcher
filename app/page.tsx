@@ -231,61 +231,70 @@ export default function HomePage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card w-full max-w-md">
-          <div className="text-center mb-6">
-            <Logo className="mb-6" />
-            <p className="text-gray-700 text-lg font-medium">From rough notes → ready to post</p>
-            <p className="text-gray-600 mt-4">Enter your email to receive a login link</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-4">
+            <Logo className="mb-4" size={200} />
+            <p className="text-gray-700 text-base font-medium">From rough notes → ready to post</p>
           </div>
+          <div className="card">
 
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  id="email"
-                  type="email"
-                  className="input pl-10"
-                  placeholder="your.email@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendLoginLink()}
-                />
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    id="email"
+                    type="email"
+                    className="input pl-10"
+                    placeholder="your.email@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendLoginLink()}
+                  />
+                </div>
               </div>
-            </div>
 
-            {error && (
-              <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200">
-                {success}
-              </div>
-            )}
-
-            <button
-              className="btn btn-primary w-full"
-              onClick={sendLoginLink}
-              disabled={loading || !email}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Mail className="inline-block mr-2 h-4 w-4" />
-                  Send Login Link
-                </>
+              {error && (
+                <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200">
+                  {error}
+                </div>
               )}
-            </button>
+              {success && (
+                <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200">
+                  {success}
+                </div>
+              )}
+
+              <button
+                className="btn btn-primary w-full"
+                onClick={sendLoginLink}
+                disabled={loading || !email}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="inline-block mr-2 h-4 w-4" />
+                    Send Login Link
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          <div className="mt-6 text-center text-xs text-gray-600">
+            <p className="mb-1.5">Patcher is a service from Donegal Mountain Rescue Team</p>
+            <p>
+              <a href="/privacy" className="hover:text-gray-900 underline">Privacy</a>
+              {' • '}
+              <a href="/terms" className="hover:text-gray-900 underline">Terms</a>
+            </p>
           </div>
         </div>
       </div>
@@ -295,16 +304,16 @@ export default function HomePage() {
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <Logo className="mb-4" />
-          <p className="text-gray-600">Transform your notes into polished social media posts</p>
+        <div className="text-center mb-6">
+          <Logo className="mb-3" size={120} />
+          <p className="text-gray-600 text-sm">Transform your notes into polished social media posts</p>
         </div>
 
         {!submission ? (
           <div className="card">
             <div className="mb-6">
               <div className="flex items-start justify-between mb-2">
-                <h2 className="text-2xl font-semibold text-gray-900">Submit Notes</h2>
+                <h2 className="text-xl font-semibold text-gray-900">Submit Notes</h2>
                 <button
                   onClick={() => setShowPromptModal(true)}
                   className="flex items-center gap-2 text-sm text-gray-700 hover:text-black font-medium transition-colors"
@@ -382,7 +391,7 @@ export default function HomePage() {
               )}
 
               <button
-                className="btn btn-ai w-full text-lg"
+                className="btn btn-ai w-full"
                 onClick={submitNotes}
                 disabled={loading || !notes.trim()}
               >
@@ -405,7 +414,7 @@ export default function HomePage() {
             <div className="card card-ai">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-2xl font-semibold text-gray-900">AI-Generated Post</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">AI-Generated Post</h2>
                 </div>
                 <div className="flex items-center gap-3">
                   <button

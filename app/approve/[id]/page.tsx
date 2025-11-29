@@ -144,18 +144,28 @@ function ApprovePageContent() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card w-full max-w-md">
-          <div className="text-center mb-6">
-            <Logo className="mb-6" />
-            <p className="text-gray-700 text-lg font-medium">From rough notes → ready to post</p>
-            <p className="text-gray-600 mt-4">Team Leader Approval</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-4">
+            <Logo className="mb-4" size={200} />
+            <p className="text-gray-700 text-base font-medium">From rough notes → ready to post</p>
+            <p className="text-gray-600 mt-3">Team Leader Approval</p>
           </div>
+          <div className="card">
           {error && (
             <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 mb-4">
               {error || 'Link expired or invalid'}
             </div>
           )}
+          </div>
+          <div className="mt-6 text-center text-xs text-gray-600">
+            <p className="mb-1.5">Patcher is a service from Donegal Mountain Rescue Team</p>
+            <p>
+              <a href="/privacy" className="hover:text-gray-900 underline">Privacy</a>
+              {' • '}
+              <a href="/terms" className="hover:text-gray-900 underline">Terms</a>
+            </p>
+          </div>
         </div>
       </div>
     )
@@ -189,10 +199,10 @@ function ApprovePageContent() {
                 <div className={`absolute inset-0 ${actionType === 'approved' ? 'bg-green-500/20' : 'bg-red-500/20'} rounded-full animate-ping`} />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
               {actionType === 'approved' ? 'Post Approved!' : 'Post Rejected'}
             </h2>
-            <p className="text-lg text-gray-600 font-medium">
+            <p className="text-base text-gray-600 font-medium">
               PRO will be notified.
             </p>
           </div>
@@ -206,15 +216,15 @@ function ApprovePageContent() {
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <Logo className="mb-4" />
-          <p className="text-gray-700 text-lg font-medium mb-2">From rough notes → ready to post</p>
-          <p className="text-gray-600 text-lg">Team Leader Approval</p>
+        <div className="text-center mb-6">
+          <Logo className="mb-3" size={120} />
+          <p className="text-gray-700 text-base font-medium mb-1.5">From rough notes → ready to post</p>
+          <p className="text-gray-600 text-base">Team Leader Approval</p>
         </div>
 
         <div className="card">
           <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Review Post for Approval</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">Review Post for Approval</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div>
