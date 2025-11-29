@@ -14,16 +14,6 @@ export const metadata: Metadata = {
     statusBarStyle: 'black-translucent',
     title: 'Patcher',
   },
-  icons: {
-    icon: [
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
-      { url: '/android-icon-192x192.png', sizes: '192x192', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-icon-180x180.png', sizes: '180x180', type: 'image/png' },
-    ],
-  },
   robots: {
     index: false,
     follow: false,
@@ -47,25 +37,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
-        {/* Apple Touch Icon - iOS fallback without size */}
-        <link rel="apple-touch-icon" href="/apple-icon-180x180.png" />
-        
-        {/* Android Icons */}
-        <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png" />
-        
-        {/* Favicons */}
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        
-        {/* Manifest */}
-        <link rel="manifest" href="/manifest.json" />
-        
-        {/* Microsoft Tiles */}
-        <meta name="msapplication-config" content="/browserconfig.xml" />
-        <meta name="msapplication-TileColor" content="#000000" />
-        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
-        
         {/* SEO and Bot Meta Tags */}
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />
         <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />
