@@ -16,7 +16,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">1. Introduction</h2>
             <p className="text-gray-700 mb-3">
-              Donegal Mountain Rescue Team ("DMRT", "we", "us", or "our") operates Patcher, a service that helps transform team member notes into social media posts. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our service.
+              Donegal Mountain Rescue Team (&quot;DMRT&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) operates Patcher, a service that helps transform team member notes into social media posts. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our service.
             </p>
             <p className="text-gray-700">
               DMRT is a registered charity in Ireland. We are committed to protecting your privacy and complying with the General Data Protection Regulation (GDPR) and the Data Protection Act 2018.
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
               <li>To maintain records for transparency and accountability</li>
             </ul>
             <p className="text-gray-700">
-              We process your data based on your consent (when you submit content) and our legitimate interests in operating the service for the benefit of DMRT's charitable activities.
+              We process your data based on your consent (when you submit content) and our legitimate interests in operating the service for the benefit of DMRT&apos;s charitable activities.
             </p>
           </section>
 
@@ -101,7 +101,7 @@ export default function PrivacyPage() {
             <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
               <li><strong>Right of access:</strong> Request a copy of your personal data</li>
               <li><strong>Right to rectification:</strong> Correct inaccurate or incomplete data</li>
-              <li><strong>Right to erasure:</strong> Request deletion of your data ("right to be forgotten")</li>
+              <li><strong>Right to erasure:</strong> Request deletion of your data (&quot;right to be forgotten&quot;)</li>
               <li><strong>Right to restrict processing:</strong> Limit how we use your data</li>
               <li><strong>Right to data portability:</strong> Receive your data in a structured format</li>
               <li><strong>Right to object:</strong> Object to processing based on legitimate interests</li>
@@ -159,7 +159,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">10. Changes to This Policy</h2>
             <p className="text-gray-700">
-              We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date. You are advised to review this Privacy Policy periodically for any changes.
+              We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last updated&quot; date. You are advised to review this Privacy Policy periodically for any changes.
             </p>
           </section>
         </div>

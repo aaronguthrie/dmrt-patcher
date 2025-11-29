@@ -16,10 +16,10 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">1. Acceptance of Terms</h2>
             <p className="text-gray-700 mb-3">
-              By accessing and using Patcher ("the Service"), operated by Donegal Mountain Rescue Team ("DMRT", "we", "us"), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the Service.
+              By accessing and using Patcher (&quot;the Service&quot;), operated by Donegal Mountain Rescue Team (&quot;DMRT&quot;, &quot;we&quot;, &quot;us&quot;), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the Service.
             </p>
             <p className="text-gray-700">
-              DMRT is a registered charity in Ireland. The Service is provided to support DMRT's charitable activities and is intended for use by authorized team members, PRO, and team leaders only.
+              DMRT is a registered charity in Ireland. The Service is provided to support DMRT&apos;s charitable activities and is intended for use by authorized team members, PRO, and team leaders only.
             </p>
           </section>
 
@@ -46,15 +46,15 @@ export default function TermsPage() {
             </p>
             <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
               <li>Submit notes about DMRT incidents, training, or activities</li>
-              <li>Generate social media posts for DMRT's official accounts</li>
+              <li>Generate social media posts for DMRT&apos;s official accounts</li>
               <li>Review, edit, and approve posts in accordance with your role</li>
-              <li>Post approved content to DMRT's Facebook and Instagram accounts</li>
+              <li>Post approved content to DMRT&apos;s Facebook and Instagram accounts</li>
             </ul>
 
             <h3 className="font-medium text-gray-900 mb-2 mt-4">3.2 Prohibited Activities</h3>
             <p className="text-gray-700 mb-3">You must not:</p>
             <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
-              <li>Use the Service for any purpose other than DMRT's charitable activities</li>
+              <li>Use the Service for any purpose other than DMRT&apos;s charitable activities</li>
               <li>Submit false, misleading, or defamatory content</li>
               <li>Submit content that violates any laws or infringes on third-party rights</li>
               <li>Attempt to bypass security measures or access unauthorized areas</li>
@@ -68,7 +68,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Content and Intellectual Property</h2>
             <h3 className="font-medium text-gray-900 mb-2">4.1 Your Content</h3>
             <p className="text-gray-700 mb-3">
-              By submitting content (notes, photos, feedback) to the Service, you grant DMRT a non-exclusive, royalty-free, perpetual license to use, modify, and publish that content for DMRT's charitable purposes, including posting to social media platforms.
+              By submitting content (notes, photos, feedback) to the Service, you grant DMRT a non-exclusive, royalty-free, perpetual license to use, modify, and publish that content for DMRT&apos;s charitable purposes, including posting to social media platforms.
             </p>
             <p className="text-gray-700 mb-3">
               You represent and warrant that:
@@ -107,7 +107,7 @@ export default function TermsPage() {
               When you approve a post for publication:
             </p>
             <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
-              <li>The post will be published to DMRT's official Facebook and Instagram accounts</li>
+              <li>The post will be published to DMRT&apos;s official Facebook and Instagram accounts</li>
               <li>You acknowledge that posts become public and may be shared, commented on, or archived by social media platforms</li>
               <li>DMRT is not responsible for third-party interactions with posted content</li>
               <li>Posts cannot be edited or deleted through this Service once published (you must use the social media platform directly)</li>
@@ -148,7 +148,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">9. Limitation of Liability</h2>
             <p className="text-gray-700 mb-3">
-              As a charity, DMRT's liability is limited to the maximum extent permitted by Irish law:
+              As a charity, DMRT&apos;s liability is limited to the maximum extent permitted by Irish law:
             </p>
             <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
               <li>DMRT is not liable for indirect, consequential, or incidental damages</li>
