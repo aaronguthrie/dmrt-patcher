@@ -37,6 +37,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
+        {/* Apple Touch Icon - explicit link for iOS */}
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        
         {/* SEO and Bot Meta Tags */}
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />
         <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex, noydir, noodp" />

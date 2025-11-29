@@ -2,6 +2,20 @@ const { withBotId } = require('botid/next/config')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // BotId configuration
+  botId: {
+    exclude: [
+      '/apple-touch-icon.png',
+      '/apple-icon.png',
+      '/icon.png',
+      '/favicon.ico',
+      '/favicon-32x32.png',
+      '/android-icon-192x192.png',
+      '/manifest.json',
+      '/logo.png',
+      '/robots.txt',
+    ],
+  },
   images: {
     remotePatterns: [
       {
@@ -47,6 +61,24 @@ const nextConfig = {
           {
             key: 'Content-Type',
             value: 'application/manifest+json',
+          },
+        ],
+      },
+      {
+        source: '/apple-touch-icon.png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/android-icon-192x192.png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
