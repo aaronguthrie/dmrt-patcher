@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Loader2, Download, Lock } from 'lucide-react'
+import { Loader2, Download, Lock, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
 import Logo from '../components/Logo'
 import ContentModal from '../components/ContentModal'
 
@@ -46,6 +46,11 @@ export default function DashboardPage() {
   const [notesModal, setNotesModal] = useState<{ isOpen: boolean; content: string | null }>({ isOpen: false, content: null })
   const [aiPostModal, setAiPostModal] = useState<{ isOpen: boolean; content: string | null }>({ isOpen: false, content: null })
   const [feedbackModal, setFeedbackModal] = useState<{ isOpen: boolean; entries: Submission['feedback'] }>({ isOpen: false, entries: [] })
+  
+  // AI Analysis states
+  const [analyzingFeedback, setAnalyzingFeedback] = useState(false)
+  const [aiSuggestions, setAiSuggestions] = useState<Array<{ title: string; improvement: string; rationale: string }>>([])
+  const [showAiCard, setShowAiCard] = useState(true)
 
   useEffect(() => {
     if (authenticated) {
@@ -151,6 +156,30 @@ export default function DashboardPage() {
     }
   }
 
+  const analyzeFeedback = async () => {
+    setAnalyzingFeedback(true)
+    setError('')
+    try {
+      const response = await fetch('/api/dashboard/analyze-feedback', {
+        method: 'POST',
+        credentials: 'include',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to analyze feedback')
+      }
+
+      setAiSuggestions(data.suggestions || [])
+      setSuccess(`Analyzed ${data.feedbackCount || 0} feedback entries`)
+    } catch (err: any) {
+      setError(err.message || 'Failed to analyze feedback')
+    } finally {
+      setAnalyzingFeedback(false)
+    }
+  }
+
   if (!authenticated) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -214,26 +243,23 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="card mb-8">
-          <div className="text-center mb-6">
-            <Logo className="mb-3" size={120} />
-            <p className="text-gray-700 text-base font-medium mb-1.5">From rough notes → ready to post</p>
-            <p className="text-gray-600 text-base">Transparency Dashboard</p>
-            <p className="text-gray-500 mt-1.5 text-sm">View and manage all submissions</p>
-          </div>
+        <div className="text-center mb-6">
+          <Logo className="mb-4" size={120} />
+        </div>
 
+        <div className="card mb-4 p-4">
           {error && (
-            <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 mb-4">
+            <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm border border-red-200 mb-3">
               {error}
             </div>
           )}
           {success && (
-            <div className="p-4 rounded-lg bg-green-50 text-green-700 border border-green-200 mb-4">
+            <div className="p-3 rounded-lg bg-green-50 text-green-700 text-sm border border-green-200 mb-3">
               {success}
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
               className="input flex-1"
@@ -263,6 +289,108 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+
+        {/* AI Feedback Analysis Card */}
+        {showAiCard && (
+          <div className="bg-gray-900 text-white rounded-lg shadow-xl mb-4 border border-gray-800 overflow-hidden">
+            <div className="p-5 border-b border-gray-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-800 rounded-lg">
+                    <Sparkles className="h-5 w-5 text-yellow-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">AI Prompt Improvement</h3>
+                    <p className="text-sm text-gray-400">Analyze feedback to enhance the AI system prompt</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowAiCard(!showAiCard)}
+                  className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white"
+                >
+                  <ChevronUp className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-5 bg-gray-800/50">
+              {aiSuggestions.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-gray-300 mb-4">Analyze user feedback to get AI-powered suggestions for improving the system prompt.</p>
+                  <button
+                    onClick={analyzeFeedback}
+                    disabled={analyzingFeedback}
+                    className="btn bg-yellow-500 hover:bg-yellow-600 text-black font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                  >
+                    {analyzingFeedback ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        Analyze Feedback
+                      </>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-base font-semibold text-white">Suggestions ({aiSuggestions.length})</h4>
+                    <button
+                      onClick={analyzeFeedback}
+                      disabled={analyzingFeedback}
+                      className="text-sm text-yellow-400 hover:text-yellow-300 disabled:opacity-50 flex items-center gap-1"
+                    >
+                      {analyzingFeedback ? (
+                        <>
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                          Re-analyzing...
+                        </>
+                      ) : (
+                        'Refresh Analysis'
+                      )}
+                    </button>
+                  </div>
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {aiSuggestions.map((suggestion, index) => (
+                      <div key={index} className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                        <h5 className="font-semibold text-white mb-2 flex items-center gap-2">
+                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-500 text-black text-xs font-bold">
+                            {index + 1}
+                          </span>
+                          {suggestion.title}
+                        </h5>
+                        <div className="ml-8 space-y-2">
+                          <div>
+                            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Improvement</p>
+                            <p className="text-sm text-gray-200">{suggestion.improvement}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Rationale</p>
+                            <p className="text-sm text-gray-300">{suggestion.rationale}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!showAiCard && (
+          <button
+            onClick={() => setShowAiCard(true)}
+            className="w-full mb-4 p-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+          >
+            <ChevronDown className="h-4 w-4" />
+            <span className="text-sm">Show AI Prompt Improvement</span>
+          </button>
+        )}
 
         <div className="card overflow-hidden p-0">
           {loadingSubmissions ? (
