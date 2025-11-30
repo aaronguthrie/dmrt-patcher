@@ -55,19 +55,19 @@ export async function POST(request: NextRequest) {
         },
       },
       orderBy: { createdAt: 'desc' },
-      take: 50, // Analyze last 50 feedback entries
+      take: 50, // Analyse last 50 feedback entries
     })
 
     if (allFeedback.length === 0) {
       return NextResponse.json({ 
         suggestions: [],
-        message: 'No feedback entries found to analyze.' 
+        message: 'No feedback entries found to analyse.' 
       })
     }
 
-    // Build analysis prompt with sanitized inputs to prevent prompt injection
+    // Build analysis prompt with sanitised inputs to prevent prompt injection
     const feedbackSummary = allFeedback.map((fb, idx) => {
-      // Sanitize all user inputs to prevent prompt injection
+      // Sanitise all user inputs to prevent prompt injection
       const sanitizedNotes = sanitizePromptInput(fb.submission.notes.substring(0, 200))
       const sanitizedPostText = fb.submission.finalPostText 
         ? sanitizePromptInput(fb.submission.finalPostText.substring(0, 200))
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 - User Feedback: ${sanitizedFeedback}`
     }).join('\n\n')
 
-    const analysisPrompt = `You are analyzing user feedback on AI-generated social media posts to improve the system prompt.
+    const analysisPrompt = `You are analysing user feedback on AI-generated social media posts to improve the system prompt.
 
 Current System Prompt:
 ${SYSTEM_PROMPT}
@@ -88,7 +88,7 @@ ${SYSTEM_PROMPT}
 User Feedback Collected:
 ${feedbackSummary}
 
-Analyze the feedback patterns and provide specific, actionable suggestions to improve the system prompt. Focus on:
+Analyse the feedback patterns and provide specific, actionable suggestions to improve the system prompt. Focus on:
 1. Common issues mentioned in feedback
 2. Areas where the prompt could be clearer or more specific
 3. Missing guidelines that would prevent the issues
@@ -164,7 +164,7 @@ Format your response as a JSON array of objects with this structure:
   } catch (error) {
     console.error('Error analyzing feedback:', error)
     return NextResponse.json(
-      { error: 'Failed to analyze feedback' },
+      { error: 'Failed to analyse feedback' },
       { status: 500 }
     )
   }

@@ -158,7 +158,7 @@ export default function DashboardPage() {
     }
   }
 
-  const analyzeFeedback = async () => {
+  const analyseFeedback = async () => {
     setAnalyzingFeedback(true)
     setError('')
     try {
@@ -170,17 +170,17 @@ export default function DashboardPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to analyze feedback')
+        throw new Error(data.error || 'Failed to analyse feedback')
       }
 
       setAiSuggestions(data.suggestions || [])
-      setSuccess(`Analyzed ${data.feedbackCount || 0} feedback entries`)
+      setSuccess(`Analysed ${data.feedbackCount || 0} feedback entries`)
       // Auto-open card when results are generated
       if (data.suggestions && data.suggestions.length > 0) {
         setShowAiCard(true)
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to analyze feedback')
+      setError(err.message || 'Failed to analyse feedback')
     } finally {
       setAnalyzingFeedback(false)
     }
@@ -320,7 +320,7 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-gray-900 font-mono">AI Prompt Improvement</h3>
-                    <p className="text-xs text-gray-600 font-mono">Analyze feedback to enhance the AI system prompt</p>
+                    <p className="text-xs text-gray-600 font-mono">Analyse feedback to enhance the AI system prompt</p>
                   </div>
                 </div>
                 <button
@@ -338,14 +338,14 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-xs font-semibold text-gray-900 font-mono">Suggestions ({aiSuggestions.length})</h4>
                     <button
-                      onClick={analyzeFeedback}
+                      onClick={analyseFeedback}
                       disabled={analyzingFeedback}
                       className="text-xs text-purple-600 hover:text-purple-700 disabled:opacity-50 flex items-center gap-1 font-mono transition-colors"
                     >
                       {analyzingFeedback ? (
                         <>
                           <Loader2 className="h-3 w-3 animate-spin" />
-                          Re-analyzing...
+                          Re-analysing...
                         </>
                       ) : (
                         <>
@@ -366,7 +366,6 @@ export default function DashboardPage() {
                         </h5>
                         <div className="ml-7 space-y-2">
                           <div>
-                            <p className="text-xs text-purple-700 uppercase tracking-wide mb-1 font-semibold font-mono">Improvement</p>
                             <p className="text-xs text-gray-700 leading-relaxed font-mono">{suggestion.improvement}</p>
                           </div>
                           <div>
@@ -401,7 +400,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-xs text-gray-600 mb-3 font-mono">No suggestions yet. Click analyze to get started.</p>
+                  <p className="text-xs text-gray-600 mb-3 font-mono">No suggestions yet. Click analyse to get started.</p>
                 </div>
               )}
             </div>
@@ -415,23 +414,23 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-gray-900 font-mono">AI Prompt Improvement</h3>
-                  <p className="text-xs text-gray-600 font-mono">Analyze feedback patterns to improve the system prompt</p>
+                  <p className="text-xs text-gray-600 font-mono">Analyse feedback patterns to improve the system prompt</p>
                 </div>
               </div>
               <button
-                onClick={analyzeFeedback}
+                onClick={analyseFeedback}
                 disabled={analyzingFeedback}
-                className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 transition-all duration-200 shadow-sm hover:shadow font-mono"
+                className="px-3 py-1.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 transition-all duration-200 shadow-sm hover:shadow font-mono"
               >
                 {analyzingFeedback ? (
                   <>
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    Analyzing...
+                    Analysing...
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-3 w-3" />
-                    Analyze with AI
+                    Analyse with AI
                   </>
                 )}
               </button>
