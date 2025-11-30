@@ -21,7 +21,7 @@ export default function ProtectedEmail({ className = '', asLink = true }: Protec
     // Encoded parts (shifted by +1 from original)
     const part1 = decode('qsp')  // 'pro'
     const part2 = decode('A')     // '@'
-    const part3 = decode('epofhbmsu')  // 'donegalmrt'
+    const part3 = decode('epofhbmsut')  // 'donegalmrt'
     const part4 = decode('/')     // '.'
     const part5 = decode('jf')    // 'ie'
     

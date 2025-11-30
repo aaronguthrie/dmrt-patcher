@@ -1,5 +1,4 @@
 import Logo from '../components/Logo'
-import Link from 'next/link'
 import ProtectedEmail from '../components/ProtectedEmail'
 
 export default function PrivacyPage() {
@@ -178,12 +177,6 @@ export default function PrivacyPage() {
               We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last updated&quot; date. You are advised to review this Privacy Policy periodically for any changes.
             </p>
           </section>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 underline">
-            ← Back to login
-          </Link>
         </div>
       </div>
     </div>

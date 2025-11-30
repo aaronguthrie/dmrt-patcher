@@ -1,5 +1,4 @@
 import Logo from '../components/Logo'
-import Link from 'next/link'
 import ProtectedEmail from '../components/ProtectedEmail'
 
 export default function TermsPage() {
@@ -219,12 +218,6 @@ export default function TermsPage() {
               If any provision of these Terms of Service is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.
             </p>
           </section>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 underline">
-            ← Back to login
-          </Link>
         </div>
       </div>
     </div>
