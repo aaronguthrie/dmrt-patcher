@@ -308,128 +308,121 @@ export default function DashboardPage() {
 
         {/* AI Feedback Analysis Card */}
         {showAiCard ? (
-          <div className="bg-white rounded-lg shadow-lg mb-4 border border-gray-200 overflow-hidden relative font-mono">
-            {/* Purple accent gradient */}
-            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700"></div>
-            
-            <div className="p-3 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 bg-purple-50 rounded border border-purple-100">
-                    <Sparkles className="h-4 w-4 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-900 font-mono">AI Prompt Improvement</h3>
-                    <p className="text-xs text-gray-600 font-mono">Analyse feedback to enhance the AI system prompt</p>
-                  </div>
+          <div className="card mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-50 rounded-lg border border-purple-100">
+                  <Sparkles className="h-5 w-5 text-purple-600" />
                 </div>
-                <button
-                  onClick={() => setShowAiCard(false)}
-                  className="p-1.5 hover:bg-gray-50 rounded transition-colors text-gray-400 hover:text-gray-600"
-                >
-                  <ChevronUp className="h-4 w-4" />
-                </button>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">AI Prompt Improvement</h3>
+                  <p className="text-sm text-gray-600">Analyse feedback to enhance the AI system prompt</p>
+                </div>
               </div>
+              <button
+                onClick={() => setShowAiCard(false)}
+                className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-gray-400 hover:text-gray-600"
+              >
+                <ChevronUp className="h-5 w-5" />
+              </button>
             </div>
             
-            <div className="p-3 bg-gray-50/50">
-              {aiSuggestions.length > 0 ? (
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-semibold text-gray-900 font-mono">Suggestions ({aiSuggestions.length})</h4>
-                    <button
-                      onClick={analyseFeedback}
-                      disabled={analyzingFeedback}
-                      className="text-xs text-purple-600 hover:text-purple-700 disabled:opacity-50 flex items-center gap-1 font-mono transition-colors"
-                    >
-                      {analyzingFeedback ? (
-                        <>
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                          Re-analysing...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="h-3 w-3" />
-                          Refresh
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  <div className="space-y-2 max-h-96 overflow-y-auto">
-                    {aiSuggestions.map((suggestion, index) => (
-                      <div key={index} className="bg-white rounded p-2.5 border border-gray-200 shadow-sm hover:shadow transition-shadow">
-                        <h5 className="font-semibold text-gray-900 mb-2 flex items-center gap-2 text-xs font-mono">
-                          <span className="flex items-center justify-center w-5 h-5 rounded-full bg-purple-600 text-white text-xs font-bold">
-                            {index + 1}
-                          </span>
-                          {suggestion.title}
-                        </h5>
-                        <div className="ml-7 space-y-2">
-                          <div>
-                            <p className="text-xs text-gray-700 leading-relaxed font-mono">{suggestion.improvement}</p>
+            {aiSuggestions.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-base font-semibold text-gray-900">Suggestions ({aiSuggestions.length})</h4>
+                  <button
+                    onClick={analyseFeedback}
+                    disabled={analyzingFeedback}
+                    className="text-sm text-purple-600 hover:text-purple-700 disabled:opacity-50 flex items-center gap-2 transition-colors"
+                  >
+                    {analyzingFeedback ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Re-analysing...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-4 w-4" />
+                        Refresh
+                      </>
+                    )}
+                  </button>
+                </div>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {aiSuggestions.map((suggestion, index) => (
+                    <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <h5 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-600 text-white text-xs font-bold">
+                          {index + 1}
+                        </span>
+                        {suggestion.title}
+                      </h5>
+                      <div className="ml-8 space-y-3">
+                        <div>
+                          <p className="text-sm text-gray-700 leading-relaxed">{suggestion.improvement}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-purple-700 uppercase tracking-wide mb-1.5 font-semibold">Rationale</p>
+                          <p className="text-sm text-gray-600 leading-relaxed">{suggestion.rationale}</p>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs text-purple-700 uppercase tracking-wide font-semibold">Prompt Edit</p>
+                            <button
+                              onClick={() => copyToClipboard(suggestion.improvement, index)}
+                              className="p-1.5 hover:bg-gray-100 rounded text-gray-500 hover:text-purple-600 transition-colors"
+                              title="Copy to clipboard"
+                            >
+                              {copiedIndex === index ? (
+                                <Check className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
+                            </button>
                           </div>
-                          <div>
-                            <p className="text-xs text-purple-700 uppercase tracking-wide mb-1 font-semibold font-mono">Rationale</p>
-                            <p className="text-xs text-gray-600 leading-relaxed font-mono">{suggestion.rationale}</p>
-                          </div>
-                          <div className="mt-2 pt-2 border-t border-gray-200">
-                            <div className="flex items-center justify-between mb-1.5">
-                              <p className="text-xs text-purple-700 uppercase tracking-wide font-semibold font-mono">Prompt Edit</p>
-                              <button
-                                onClick={() => copyToClipboard(suggestion.improvement, index)}
-                                className="p-1 hover:bg-gray-100 rounded text-gray-500 hover:text-purple-600 transition-colors"
-                                title="Copy to clipboard"
-                              >
-                                {copiedIndex === index ? (
-                                  <Check className="h-3 w-3 text-green-600" />
-                                ) : (
-                                  <Copy className="h-3 w-3" />
-                                )}
-                              </button>
-                            </div>
-                            <div className="relative">
-                              <pre className="text-xs bg-gray-50 border border-gray-200 rounded p-2 overflow-x-auto font-mono text-gray-800 whitespace-pre-wrap break-words">
-                                {suggestion.improvement}
-                              </pre>
-                            </div>
+                          <div className="relative">
+                            <pre className="text-sm bg-white border border-gray-200 rounded p-3 overflow-x-auto font-mono text-gray-800 whitespace-pre-wrap break-words">
+                              {suggestion.improvement}
+                            </pre>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-xs text-gray-600 mb-3 font-mono">No suggestions yet. Click analyse to get started.</p>
-                </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-sm text-gray-600 mb-4">No suggestions yet. Click analyse to get started.</p>
+              </div>
+            )}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm mb-4 border border-gray-200 p-3 font-mono">
+          <div className="card mb-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="p-1.5 bg-purple-50 rounded border border-purple-100">
-                  <Sparkles className="h-4 w-4 text-purple-600" />
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-50 rounded-lg border border-purple-100">
+                  <Sparkles className="h-5 w-5 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900 font-mono">AI Prompt Improvement</h3>
-                  <p className="text-xs text-gray-600 font-mono">Analyse feedback patterns to improve the system prompt</p>
+                  <h3 className="text-lg font-semibold text-gray-900">AI Prompt Improvement</h3>
+                  <p className="text-sm text-gray-600">Analyse feedback patterns to improve the system prompt</p>
                 </div>
               </div>
               <button
                 onClick={analyseFeedback}
                 disabled={analyzingFeedback}
-                className="px-3 py-1.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 transition-all duration-200 shadow-sm hover:shadow font-mono"
+                className="btn btn-primary flex items-center justify-center gap-2"
               >
                 {analyzingFeedback ? (
                   <>
-                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Analysing...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="h-3 w-3" />
+                    <Sparkles className="h-4 w-4" />
                     Analyse with AI
                   </>
                 )}
