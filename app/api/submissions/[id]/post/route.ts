@@ -92,7 +92,7 @@ export async function POST(
     } catch (error) {
       facebookError = error instanceof Error ? error : new Error(String(error))
       console.error('Error posting to Facebook:', error)
-      await logError('Failed to post to Facebook', {
+        logError('Failed to post to Facebook', {
         component: 'social-media',
         error: facebookError,
         submissionId: params.id,
@@ -110,7 +110,7 @@ export async function POST(
       } catch (error) {
         instagramError = error instanceof Error ? error : new Error(String(error))
         console.error('Error posting to Instagram:', error)
-        await logError('Failed to post to Instagram', {
+        logError('Failed to post to Instagram', {
           component: 'social-media',
           error: instagramError,
           submissionId: params.id,
@@ -132,8 +132,8 @@ export async function POST(
       },
     })
 
-    // Log successful posting (even if one platform failed)
-    await logAudit('Post published to social media', {
+    // Log successful posting (fire-and-forget)
+    logAudit('Post published to social media', {
       component: 'social-media',
       actionType: 'post',
       userEmail: session.email,
@@ -157,7 +157,7 @@ export async function POST(
     })
   } catch (error) {
     console.error('Error posting to social media:', error)
-    await logError('Error posting to social media', {
+    logError('Error posting to social media', {
       component: 'social-media',
       error: error instanceof Error ? error : new Error(String(error)),
       submissionId: params.id,

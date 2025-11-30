@@ -82,8 +82,8 @@ export async function POST(request: NextRequest) {
         console.warn(`🚫 Failed password login attempt - IP: ${ip}`)
       }
       
-      // Log failed authentication attempt
-      await logAudit('Password login failed - invalid password', {
+      // Log failed authentication attempt (fire-and-forget)
+      logAudit('Password login failed - invalid password', {
         component: 'authentication',
         actionType: 'authenticate',
         userEmail: proEmail,
@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
       role: 'pro',
     })
 
-    // Log successful authentication
-    await logAudit('Password login successful', {
+    // Log successful authentication (fire-and-forget)
+    logAudit('Password login successful', {
       component: 'authentication',
       actionType: 'authenticate',
       userEmail: proEmail,
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error: any) {
     console.error('Error in password login:', error)
-    await logError('Error in password login', {
+    logError('Error in password login', {
       component: 'authentication',
       error: error instanceof Error ? error : new Error(String(error)),
     })

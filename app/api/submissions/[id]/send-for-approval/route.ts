@@ -103,8 +103,8 @@ export async function POST(
     const code = await createAuthCode(leaderEmail, 'leader', params.id)
     await notifyTeamLeader(params.id, code)
 
-    // Log sending for approval
-    await logAudit('Submission sent for leader approval', {
+    // Log sending for approval (fire-and-forget)
+    logAudit('Submission sent for leader approval', {
       component: 'approval',
       actionType: 'update',
       userEmail: session.email,
@@ -119,7 +119,7 @@ export async function POST(
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error sending for approval:', error)
-    await logError('Error sending for approval', {
+    logError('Error sending for approval', {
       component: 'approval',
       error: error instanceof Error ? error : new Error(String(error)),
       submissionId: params.id,

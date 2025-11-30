@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!validation.valid) {
       // Log failed authentication attempt
-      await logAudit('Authentication failed - invalid or expired code', {
+      logAudit('Authentication failed - invalid or expired code', {
         component: 'authentication',
         actionType: 'authenticate',
         userRole: role,
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Log successful authentication
-    await logAudit('User authenticated successfully', {
+    logAudit('User authenticated successfully', {
       component: 'authentication',
       actionType: 'authenticate',
       userEmail: validation.email!,
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error validating auth code:', error)
-    await logError('Error validating auth code', {
+    logError('Error validating auth code', {
       component: 'authentication',
       error: error instanceof Error ? error : new Error(String(error)),
     })

@@ -386,7 +386,7 @@ export async function rateLimitByIP(
       console.error(`🚨 [${timestamp}] Environment check - POSTGRES_URL: ${hasPostgres ? 'SET' : 'MISSING'}, Redis: ${hasRedis ? 'SET' : 'MISSING'}`)
       
       // Send critical alert to Better Stack
-      await logError('Rate limiting backend not configured - using in-memory fallback', {
+      logError('Rate limiting backend not configured - using in-memory fallback', {
         severity: 'critical',
         component: 'rate-limiting',
         issue: 'backend-missing',
@@ -443,9 +443,9 @@ export async function rateLimitByIP(
       console.error(`🚨 [${timestamp}] Error details: ${error?.message || 'Unknown error'}`)
       console.error(`🚨 [${timestamp}] IP: ${ip}`)
       
-      // Send critical error to Better Stack
+      // Send critical error to Better Stack (fire-and-forget)
       const shouldMask = process.env.MASK_AUDIT_DATA !== 'false'
-      await logError('Rate limiting backend error - blocking request for security', {
+      logError('Rate limiting backend error - blocking request for security', {
         severity: 'critical',
         component: 'rate-limiting',
         issue: 'backend-error',

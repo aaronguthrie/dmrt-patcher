@@ -102,8 +102,8 @@ export async function POST(
       })
       await notifyProPostApproved(params.id, code)
 
-      // Log approval
-      await logAudit('Submission approved by leader', {
+      // Log approval (fire-and-forget)
+      logAudit('Submission approved by leader', {
         component: 'approval',
         actionType: 'approve',
         userEmail: session.email,
@@ -124,8 +124,8 @@ export async function POST(
       })
       await notifyProPostRejected(params.id, comment || '', code)
 
-      // Log rejection
-      await logAudit('Submission rejected by leader', {
+      // Log rejection (fire-and-forget)
+      logAudit('Submission rejected by leader', {
         component: 'approval',
         actionType: 'reject',
         userEmail: session.email,
@@ -141,7 +141,7 @@ export async function POST(
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error processing approval:', error)
-    await logError('Error processing approval', {
+    logError('Error processing approval', {
       component: 'approval',
       error: error instanceof Error ? error : new Error(String(error)),
       submissionId: params.id,

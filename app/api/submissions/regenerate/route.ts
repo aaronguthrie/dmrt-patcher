@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
         feedback || null
       )
     } catch (aiError) {
-      await logError('Failed to regenerate post with AI', {
+      logError('Failed to regenerate post with AI', {
         component: 'submission',
         error: aiError instanceof Error ? aiError : new Error(String(aiError)),
         submissionId,
@@ -146,8 +146,8 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Log regeneration
-    await logAudit('Post regenerated', {
+    // Log regeneration (fire-and-forget)
+    logAudit('Post regenerated', {
       component: 'submission',
       actionType: 'update',
       userEmail: session.email,
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error regenerating post:', error)
-    await logError('Error regenerating post', {
+    logError('Error regenerating post', {
       component: 'submission',
       error: error instanceof Error ? error : new Error(String(error)),
     })

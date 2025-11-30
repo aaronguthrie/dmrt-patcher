@@ -98,8 +98,8 @@ export async function POST(request: NextRequest) {
     const code = await createAuthCode(proEmail, 'pro')
     await notifyPRO(submissionId, code)
 
-    // Log marking as ready
-    await logAudit('Submission marked as ready for PRO review', {
+    // Log marking as ready (fire-and-forget)
+    logAudit('Submission marked as ready for PRO review', {
       component: 'submission',
       actionType: 'update',
       userEmail: session.email,
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error marking submission as ready:', error)
-    await logError('Error marking submission as ready', {
+    logError('Error marking submission as ready', {
       component: 'submission',
       error: error instanceof Error ? error : new Error(String(error)),
     })

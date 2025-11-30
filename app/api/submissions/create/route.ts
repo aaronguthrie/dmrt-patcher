@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     try {
       generatedPost = await generatePost(sanitizedNotes)
     } catch (aiError) {
-      await logError('Failed to generate post with AI', {
+      logError('Failed to generate post with AI', {
         component: 'submission',
         error: aiError instanceof Error ? aiError : new Error(String(aiError)),
         submissionId: submission.id,
@@ -96,9 +96,9 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Log successful submission creation
+    // Log successful submission creation (fire-and-forget)
     const ip = request.ip ?? request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
-    await logAudit('Submission created', {
+    logAudit('Submission created', {
       component: 'submission',
       actionType: 'create',
       userEmail: email,
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error creating submission:', error)
-    await logError('Error creating submission', {
+    logError('Error creating submission', {
       component: 'submission',
       error: error instanceof Error ? error : new Error(String(error)),
     })

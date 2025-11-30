@@ -114,8 +114,8 @@ export async function GET(request: NextRequest) {
       ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
     ].join('\n')
 
-    // Log export
-    await logAudit('Submissions exported to CSV', {
+    // Log export (fire-and-forget)
+    logAudit('Submissions exported to CSV', {
       component: 'dashboard',
       actionType: 'export',
       userEmail: session.email,
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error exporting submissions:', error)
-    await logError('Error exporting submissions', {
+    logError('Error exporting submissions', {
       component: 'dashboard',
       error: error instanceof Error ? error : new Error(String(error)),
     })

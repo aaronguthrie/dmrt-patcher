@@ -52,19 +52,19 @@ export async function logError(
 
   const { error, severity = 'error', component, ...extra } = context
 
-  try {
-    await logtail.error(message, {
-      severity,
-      component: component || 'unknown',
-      error: error instanceof Error ? error.message : error,
-      errorStack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
-      ...extra,
-    })
-  } catch (err) {
+  // Fire-and-forget: don't block the request on logging
+  // Logtail batches logs internally, so this is safe
+  logtail.error(message, {
+    severity,
+    component: component || 'unknown',
+    error: error instanceof Error ? error.message : error,
+    errorStack: error instanceof Error ? error.stack : undefined,
+    timestamp: new Date().toISOString(),
+    ...extra,
+  }).catch((err) => {
     // Fail silently - don't break the app if logging fails
     console.error('Failed to send log to Better Stack:', err)
-  }
+  })
 }
 
 /**
@@ -84,17 +84,16 @@ export async function logWarning(
 
   const { component, ...extra } = context
 
-  try {
-    await logtail.warn(message, {
-      severity: 'warning',
-      component: component || 'unknown',
-      timestamp: new Date().toISOString(),
-      ...extra,
-    })
-  } catch (err) {
+  // Fire-and-forget: don't block the request on logging
+  logtail.warn(message, {
+    severity: 'warning',
+    component: component || 'unknown',
+    timestamp: new Date().toISOString(),
+    ...extra,
+  }).catch((err) => {
     // Fail silently - don't break the app if logging fails
     console.error('Failed to send log to Better Stack:', err)
-  }
+  })
 }
 
 /**
@@ -114,17 +113,16 @@ export async function logInfo(
 
   const { component, ...extra } = context
 
-  try {
-    await logtail.info(message, {
-      severity: 'info',
-      component: component || 'unknown',
-      timestamp: new Date().toISOString(),
-      ...extra,
-    })
-  } catch (err) {
+  // Fire-and-forget: don't block the request on logging
+  logtail.info(message, {
+    severity: 'info',
+    component: component || 'unknown',
+    timestamp: new Date().toISOString(),
+    ...extra,
+  }).catch((err) => {
     // Fail silently - don't break the app if logging fails
     console.error('Failed to send log to Better Stack:', err)
-  }
+  })
 }
 
 /**
@@ -179,25 +177,25 @@ export async function logAudit(
         : ip)
     : undefined
 
-  try {
-    await logtail.info(`AUDIT: ${action}`, {
-      severity: 'info',
-      component: component || 'audit',
-      audit: true,
-      action,
-      actionType,
-      userEmail: loggedEmail,
-      userRole,
-      resourceId,
-      resourceType,
-      ip: loggedIp,
-      success,
-      timestamp: new Date().toISOString(),
-      ...extra,
-    })
-  } catch (err) {
+  // Fire-and-forget: don't block the request on logging
+  // This is critical for performance - audit logs should not slow down requests
+  logtail.info(`AUDIT: ${action}`, {
+    severity: 'info',
+    component: component || 'audit',
+    audit: true,
+    action,
+    actionType,
+    userEmail: loggedEmail,
+    userRole,
+    resourceId,
+    resourceType,
+    ip: loggedIp,
+    success,
+    timestamp: new Date().toISOString(),
+    ...extra,
+  }).catch((err) => {
     // Fail silently - don't break the app if logging fails
     console.error('Failed to send audit log to Better Stack:', err)
-  }
+  })
 }
 

@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     
     if (!isValid) {
       // Log unauthorized email attempt
-      await logAudit('Magic link request failed - unauthorized email', {
+      logAudit('Magic link request failed - unauthorized email', {
         component: 'authentication',
         actionType: 'authenticate',
         userRole: validRole,
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       code = await createAuthCode(email, validRole)
     } catch (dbError: any) {
       console.error('Database error creating auth code:', dbError)
-      await logError('Database error creating auth code', {
+      logError('Database error creating auth code', {
         component: 'authentication',
         error: dbError instanceof Error ? dbError : new Error(String(dbError)),
         userEmail: email,
@@ -151,8 +151,8 @@ export async function POST(request: NextRequest) {
     try {
       await sendMagicLink(email, validRole, code)
       
-      // Log successful magic link sent
-      await logAudit('Magic link sent', {
+      // Log successful magic link sent (fire-and-forget)
+      logAudit('Magic link sent', {
         component: 'authentication',
         actionType: 'authenticate',
         userEmail: email,
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       })
     } catch (emailError: any) {
       console.error('Email sending error:', emailError)
-      await logError('Failed to send magic link email', {
+      logError('Failed to send magic link email', {
         component: 'authentication',
         error: emailError instanceof Error ? emailError : new Error(String(emailError)),
         userEmail: email,
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
       console.error('Error sending auth link:', errorMessage)
     }
     
-    await logError('Unexpected error sending auth link', {
+    logError('Unexpected error sending auth link', {
       component: 'authentication',
       error: error instanceof Error ? error : new Error(String(error)),
     })
