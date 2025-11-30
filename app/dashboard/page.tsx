@@ -292,35 +292,41 @@ export default function DashboardPage() {
 
         {/* AI Feedback Analysis Card */}
         {showAiCard && (
-          <div className="bg-gray-900 text-white rounded-lg shadow-xl mb-4 border border-gray-800 overflow-hidden">
-            <div className="p-5 border-b border-gray-800">
+          <div className="bg-white rounded-lg shadow-lg mb-4 border border-gray-200 overflow-hidden relative">
+            {/* Subtle green accent gradient */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600"></div>
+            
+            <div className="p-5 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gray-800 rounded-lg">
-                    <Sparkles className="h-5 w-5 text-yellow-400" />
+                  <div className="p-2.5 bg-emerald-50 rounded-lg border border-emerald-100">
+                    <Sparkles className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">AI Prompt Improvement</h3>
-                    <p className="text-sm text-gray-400">Analyze feedback to enhance the AI system prompt</p>
+                    <h3 className="text-lg font-semibold text-gray-900">AI Prompt Improvement</h3>
+                    <p className="text-sm text-gray-600">Analyze feedback to enhance the AI system prompt</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowAiCard(!showAiCard)}
-                  className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white"
+                  className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-gray-400 hover:text-gray-600"
                 >
                   <ChevronUp className="h-5 w-5" />
                 </button>
               </div>
             </div>
             
-            <div className="p-5 bg-gray-800/50">
+            <div className="p-5 bg-gray-50/50">
               {aiSuggestions.length === 0 ? (
-                <div className="text-center py-6">
-                  <p className="text-gray-300 mb-4">Analyze user feedback to get AI-powered suggestions for improving the system prompt.</p>
+                <div className="text-center py-8">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 mb-4">
+                    <Sparkles className="h-8 w-8 text-emerald-600" />
+                  </div>
+                  <p className="text-gray-700 mb-6 max-w-md mx-auto">Analyze user feedback to get AI-powered suggestions for improving the system prompt.</p>
                   <button
                     onClick={analyzeFeedback}
                     disabled={analyzingFeedback}
-                    className="btn bg-yellow-500 hover:bg-yellow-600 text-black font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                    className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     {analyzingFeedback ? (
                       <>
@@ -338,11 +344,11 @@ export default function DashboardPage() {
               ) : (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-base font-semibold text-white">Suggestions ({aiSuggestions.length})</h4>
+                    <h4 className="text-base font-semibold text-gray-900">Suggestions ({aiSuggestions.length})</h4>
                     <button
                       onClick={analyzeFeedback}
                       disabled={analyzingFeedback}
-                      className="text-sm text-yellow-400 hover:text-yellow-300 disabled:opacity-50 flex items-center gap-1"
+                      className="text-sm text-emerald-600 hover:text-emerald-700 disabled:opacity-50 flex items-center gap-1.5 font-medium transition-colors"
                     >
                       {analyzingFeedback ? (
                         <>
@@ -350,27 +356,30 @@ export default function DashboardPage() {
                           Re-analyzing...
                         </>
                       ) : (
-                        'Refresh Analysis'
+                        <>
+                          <Sparkles className="h-3 w-3" />
+                          Refresh Analysis
+                        </>
                       )}
                     </button>
                   </div>
                   <div className="space-y-3 max-h-96 overflow-y-auto">
                     {aiSuggestions.map((suggestion, index) => (
-                      <div key={index} className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-                        <h5 className="font-semibold text-white mb-2 flex items-center gap-2">
-                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-500 text-black text-xs font-bold">
+                      <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                        <h5 className="font-semibold text-gray-900 mb-3 flex items-center gap-2.5">
+                          <span className="flex items-center justify-center w-7 h-7 rounded-full bg-emerald-600 text-white text-xs font-bold shadow-sm">
                             {index + 1}
                           </span>
                           {suggestion.title}
                         </h5>
-                        <div className="ml-8 space-y-2">
+                        <div className="ml-9 space-y-3">
                           <div>
-                            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Improvement</p>
-                            <p className="text-sm text-gray-200">{suggestion.improvement}</p>
+                            <p className="text-xs text-emerald-700 uppercase tracking-wide mb-1.5 font-semibold">Improvement</p>
+                            <p className="text-sm text-gray-700 leading-relaxed">{suggestion.improvement}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Rationale</p>
-                            <p className="text-sm text-gray-300">{suggestion.rationale}</p>
+                            <p className="text-xs text-emerald-700 uppercase tracking-wide mb-1.5 font-semibold">Rationale</p>
+                            <p className="text-sm text-gray-600 leading-relaxed">{suggestion.rationale}</p>
                           </div>
                         </div>
                       </div>
@@ -385,10 +394,10 @@ export default function DashboardPage() {
         {!showAiCard && (
           <button
             onClick={() => setShowAiCard(true)}
-            className="w-full mb-4 p-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+            className="w-full mb-4 p-3 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 border border-gray-200 shadow-sm hover:shadow-md"
           >
-            <ChevronDown className="h-4 w-4" />
-            <span className="text-sm">Show AI Prompt Improvement</span>
+            <ChevronDown className="h-4 w-4 text-emerald-600" />
+            <span className="text-sm font-medium">Show AI Prompt Improvement</span>
           </button>
         )}
 
