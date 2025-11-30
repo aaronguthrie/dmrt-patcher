@@ -517,10 +517,10 @@ export async function rateLimitByIdentifier(
         : '***'
       console.warn(`⚠️ Rate limit exceeded for identifier: ${maskedId} (limit: ${result.limit}, remaining: ${result.remaining})`)
       
-      // Log to Better Stack for analysis (use warning level to avoid spam)
+      // Log to Better Stack for analysis (fire-and-forget)
       const shouldMask = process.env.MASK_AUDIT_DATA !== 'false'
       const loggedId = shouldMask ? maskedId : identifier
-      await logWarning('Rate limit exceeded', {
+      logWarning('Rate limit exceeded', {
         component: 'rate-limiting',
         type: 'identifier-limit',
         identifier: loggedId,
@@ -544,9 +544,9 @@ export async function rateLimitByIdentifier(
       console.error(`🚨 [${timestamp}] Rate limiting backend error - blocking request for security`)
       console.error(`🚨 [${timestamp}] Error details: ${error?.message || 'Unknown error'}`)
       
-      // Send critical error to Better Stack
+      // Send critical error to Better Stack (fire-and-forget)
       // Note: No IP/identifier in this context, so no masking needed
-      await logError('Rate limiting backend error - blocking request for security', {
+      logError('Rate limiting backend error - blocking request for security', {
         severity: 'critical',
         component: 'rate-limiting',
         issue: 'backend-error',
