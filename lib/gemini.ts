@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { sanitizePromptInput } from './validation'
+import { sanitizeForAI } from './validation'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
@@ -82,10 +82,11 @@ export async function generatePost(
   previousOutput: string | null = null,
   feedback: string | null = null
 ): Promise<string> {
-  // Sanitize all inputs to prevent prompt injection
-  const sanitizedNotes = sanitizePromptInput(notes)
-  const sanitizedPreviousOutput = previousOutput ? sanitizePromptInput(previousOutput) : null
-  const sanitizedFeedback = feedback ? sanitizePromptInput(feedback) : null
+  // Sanitize all inputs: removes prompt injection patterns and PII
+  // This provides defense-in-depth protection per Google's recommendations
+  const sanitizedNotes = sanitizeForAI(notes)
+  const sanitizedPreviousOutput = previousOutput ? sanitizeForAI(previousOutput) : null
+  const sanitizedFeedback = feedback ? sanitizeForAI(feedback) : null
 
   let userPrompt: string
 

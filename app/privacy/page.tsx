@@ -61,7 +61,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Third-Party Services</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Third-Party Services and AI Processing</h2>
             <p className="text-gray-700 mb-3">
               We use the following third-party services that may process your data:
             </p>
@@ -73,7 +73,22 @@ export default function PrivacyPage() {
               <li><strong>Neon PostgreSQL:</strong> Stores your submission data and authentication codes</li>
               <li><strong>BotID (Kasada):</strong> Provides bot detection and security services</li>
             </ul>
+            
+            <h3 className="font-medium text-gray-900 mb-2 mt-4">4.1 Google Gemini AI Data Usage</h3>
+            <p className="text-gray-700 mb-3">
+              When your notes are processed by Google Gemini AI to generate social media posts:
+            </p>
+            <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
+              <li><strong>✅ Your data is NOT used for training or fine-tuning AI models</strong></li>
+              <li><strong>✅ Your data is NOT used to improve Google products</strong></li>
+              <li>Data is processed in accordance with Google&apos;s Data Processing Addendum (GDPR-compliant)</li>
+              <li>Data is retained by Google for 55 days for abuse monitoring only (not for training)</li>
+              <li>All data is automatically sanitised to remove personally identifiable information (PII) before submission</li>
+            </ul>
             <p className="text-gray-700">
+              This protection is guaranteed because Donegal Mountain Rescue Team operates with an active Paid Billing Account, and as an Ireland-based organisation (EEA), Paid Services terms apply automatically. Detailed information is available upon request.
+            </p>
+            <p className="text-gray-700 mt-3">
               All third-party services are bound by their own privacy policies and data processing agreements. We only share data necessary for the service to function.
             </p>
           </section>
@@ -81,7 +96,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">5. Data Retention</h2>
             <p className="text-gray-700 mb-3">
-              We retain your personal information for as long as necessary to provide the service and fulfill our charitable purposes:
+              We retain your personal information for as long as necessary to provide the service and fulfil our charitable purposes:
             </p>
             <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
               <li><strong>Submissions:</strong> Retained indefinitely for transparency and historical records</li>
@@ -115,12 +130,13 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-3">7. Data Security</h2>
             <p className="text-gray-700 mb-3">
-              We implement appropriate technical and organizational measures to protect your personal information:
+              We implement appropriate technical and organisational measures to protect your personal information:
             </p>
             <ul className="list-disc list-inside text-gray-700 mb-3 space-y-1 ml-4">
               <li>Encrypted authentication codes using cryptographically secure random generation</li>
               <li>Secure password hashing (bcrypt) for PRO access</li>
               <li>HTTPS encryption for all data transmission</li>
+              <li>Automated PII sanitisation before AI processing</li>
               <li>Rate limiting and bot detection to prevent abuse</li>
               <li>Role-based access control to limit data access</li>
               <li>Secure session management using JWT tokens</li>

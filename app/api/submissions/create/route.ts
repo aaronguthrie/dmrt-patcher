@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 import { uploadPhotos } from '@/lib/blob'
 import { generatePost } from '@/lib/gemini'
 import { checkBotId } from '@/lib/botid'
-import { validateFile, validateNotesLength, sanitizePromptInput } from '@/lib/validation'
+import { validateFile, validateNotesLength, sanitizeForAI } from '@/lib/validation'
 import { requireAuth } from '@/lib/auth-middleware'
 
 export async function POST(request: NextRequest) {
@@ -39,8 +39,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: notesValidation.error }, { status: 400 })
     }
 
-    // Sanitize notes to prevent prompt injection
-    const sanitizedNotes = sanitizePromptInput(notes)
+    // Sanitize notes: removes prompt injection patterns and PII
+    // This provides defense-in-depth protection per Google's recommendations
+    const sanitizedNotes = sanitizeForAI(notes)
 
     // Validate and upload photos
     const photoPaths: string[] = []
