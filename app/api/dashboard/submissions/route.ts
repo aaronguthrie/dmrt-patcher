@@ -39,7 +39,9 @@ export async function GET(request: NextRequest) {
     const submissions = await prisma.submission.findMany({
       where,
       include: {
-        feedback: true,
+        feedback: {
+          orderBy: { versionNumber: 'desc' }, // Latest feedback first
+        },
         leaderApprovals: {
           orderBy: { createdAt: 'desc' },
           take: 1,

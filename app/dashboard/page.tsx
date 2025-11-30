@@ -1,7 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Loader2, Download, Lock } from 'lucide-react'
 import Logo from '../components/Logo'
+import ContentModal from '../components/ContentModal'
 
 interface Submission {
   id: string
@@ -17,7 +19,12 @@ interface Submission {
   facebookPostId: string | null
   instagramPostId: string | null
   postedAt: string | null
-  feedback: Array<{ id: string }>
+  feedback: Array<{
+    id: string
+    feedbackText: string
+    versionNumber: number
+    createdAt: string
+  }>
   leaderApprovals: Array<{ approved: boolean; comment: string | null }>
 }
 
@@ -30,9 +37,14 @@ export default function DashboardPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
-  const [expandedId, setExpandedId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const [success, setSuccess] = useState('')
+  
+  // Modal states
+  const [notesModal, setNotesModal] = useState<{ isOpen: boolean; content: string | null }>({ isOpen: false, content: null })
+  const [aiPostModal, setAiPostModal] = useState<{ isOpen: boolean; content: string | null }>({ isOpen: false, content: null })
+  const [feedbackModal, setFeedbackModal] = useState<{ isOpen: boolean; entries: Submission['feedback'] }>({ isOpen: false, entries: [] })
 
   useEffect(() => {
     if (authenticated) {
@@ -124,8 +136,11 @@ export default function DashboardPage() {
       // Remove from local state
       setSubmissions(submissions.filter(sub => sub.id !== id))
       setDeleteConfirmId(null)
+      setSuccess('Submission deleted successfully')
+      setError('')
     } catch (err: any) {
-      alert(err.message || 'Failed to delete submission')
+      setError(err.message || 'Failed to delete submission')
+      setSuccess('')
     } finally {
       setDeletingId(null)
     }
@@ -169,7 +184,17 @@ export default function DashboardPage() {
               onClick={authenticate}
               disabled={loading || !password}
             >
-              {loading ? 'Authenticating...' : 'Access Dashboard'}
+              {loading ? (
+                <>
+                  <Loader2 className="inline-block mr-2 h-4 w-4 animate-spin" />
+                  Authenticating...
+                </>
+              ) : (
+                <>
+                  <Lock className="inline-block mr-2 h-4 w-4" />
+                  Access Dashboard
+                </>
+              )}
             </button>
           </div>
           </div>
@@ -182,198 +207,224 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container">
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-          <h1>Transparency Dashboard</h1>
-          <button className="button" onClick={exportCSV}>
-            Export CSV
-          </button>
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="card mb-8">
+          <div className="text-center mb-6">
+            <Logo className="mb-3" size={120} />
+            <p className="text-gray-700 text-base font-medium mb-1.5">From rough notes → ready to post</p>
+            <p className="text-gray-600 text-base">Transparency Dashboard</p>
+            <p className="text-gray-500 mt-1.5 text-sm">View and manage all submissions</p>
+          </div>
+
+          {error && (
+            <div className="p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 mb-4">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-4 rounded-lg bg-green-50 text-green-700 border border-green-200 mb-4">
+              {success}
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <input
+              type="text"
+              className="input flex-1"
+              placeholder="Search by notes, post text, or email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select
+              className="input sm:w-48"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="">All Statuses</option>
+              <option value="draft">Draft</option>
+              <option value="awaiting_pro">Awaiting PRO</option>
+              <option value="awaiting_leader">Awaiting Leader</option>
+              <option value="awaiting_pro_to_post">Awaiting PRO to Post</option>
+              <option value="posted">Posted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <button 
+              className="btn btn-primary flex items-center justify-center gap-2"
+              onClick={exportCSV}
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </button>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-          <input
-            type="text"
-            className="input"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ flex: 1 }}
-          />
-          <select
-            className="input"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={{ width: '200px' }}
-          >
-            <option value="">All Statuses</option>
-            <option value="draft">Draft</option>
-            <option value="awaiting_pro">Awaiting PRO</option>
-            <option value="awaiting_leader">Awaiting Leader</option>
-            <option value="awaiting_pro_to_post">Awaiting PRO to Post</option>
-            <option value="posted">Posted</option>
-            <option value="rejected">Rejected</option>
-          </select>
-        </div>
-
-        <div style={{ overflowX: 'auto', minWidth: '100%' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1200px' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Date</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Submitted By</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Status</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Original Notes</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>AI Post</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Feedback</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>PRO Edits</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Approval</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left' }}>Posted</th>
-                <th style={{ padding: '0.75rem', textAlign: 'left', position: 'sticky', right: 0, backgroundColor: 'white', zIndex: 10 }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {submissions.map((sub) => (
-                <tr key={sub.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                  <td style={{ padding: '0.75rem' }}>
-                    {new Date(sub.createdAt).toLocaleDateString()}
-                  </td>
-                  <td style={{ padding: '0.75rem' }}>{sub.submittedByEmail}</td>
-                  <td style={{ padding: '0.75rem' }}>{sub.status}</td>
-                  <td style={{ padding: '0.75rem', maxWidth: '200px' }}>
-                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {sub.notes.substring(0, 100)}
-                      {sub.notes.length > 100 && (
-                        <button
-                          onClick={() => setExpandedId(expandedId === sub.id ? null : sub.id)}
-                          style={{ marginLeft: '0.5rem', color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer' }}
-                        >
-                          {expandedId === sub.id ? 'Less' : 'More'}
-                        </button>
-                      )}
-                    </div>
-                    {expandedId === sub.id && (
-                      <div style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap', fontSize: '0.9rem' }}>
-                        {sub.notes}
-                      </div>
-                    )}
-                  </td>
-                  <td style={{ padding: '0.75rem', maxWidth: '200px' }}>
-                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {sub.finalPostText?.substring(0, 100) || 'N/A'}
-                    </div>
-                  </td>
-                  <td style={{ padding: '0.75rem' }}>{sub.feedback.length}</td>
-                  <td style={{ padding: '0.75rem' }}>
-                    {sub.editedByPro ? 'Yes' : 'No'}
-                  </td>
-                  <td style={{ padding: '0.75rem' }}>
-                    {sub.leaderApprovals.length > 0
-                      ? sub.leaderApprovals[0].approved
-                        ? '✓ Approved'
-                        : `✗ Rejected${sub.leaderApprovals[0].comment ? `: ${sub.leaderApprovals[0].comment}` : ''}`
-                      : 'N/A'}
-                  </td>
-                  <td style={{ padding: '0.75rem' }}>
-                    {sub.postedToFacebook || sub.postedToInstagram ? (
-                      <div>
-                        {sub.postedToFacebook && (
-                          <div>
-                            <a
-                              href={`https://facebook.com/${sub.facebookPostId}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ color: '#2563eb' }}
-                            >
-                              Facebook
-                            </a>
-                          </div>
-                        )}
-                        {sub.postedToInstagram && (
-                          <div>
-                            <a
-                              href={`https://instagram.com/p/${sub.instagramPostId}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ color: '#2563eb' }}
-                            >
-                              Instagram
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      'No'
-                    )}
-                  </td>
-                  <td style={{ padding: '0.75rem', position: 'sticky', right: 0, backgroundColor: 'white', zIndex: 5, minWidth: '120px' }}>
-                    {deleteConfirmId === sub.id ? (
-                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.875rem', color: '#dc2626', fontWeight: '500' }}>Confirm?</span>
-                        <button
-                          onClick={() => deleteSubmission(sub.id)}
-                          disabled={deletingId === sub.id}
-                          style={{
-                            padding: '0.375rem 0.75rem',
-                            fontSize: '0.875rem',
-                            fontWeight: '500',
-                            backgroundColor: '#dc2626',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '0.375rem',
-                            cursor: deletingId === sub.id ? 'not-allowed' : 'pointer',
-                            opacity: deletingId === sub.id ? 0.5 : 1,
-                            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                          }}
-                        >
-                          {deletingId === sub.id ? 'Deleting...' : 'Yes'}
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirmId(null)}
-                          disabled={deletingId === sub.id}
-                          style={{
-                            padding: '0.375rem 0.75rem',
-                            fontSize: '0.875rem',
-                            fontWeight: '500',
-                            backgroundColor: '#6b7280',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '0.375rem',
-                            cursor: deletingId === sub.id ? 'not-allowed' : 'pointer',
-                            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setDeleteConfirmId(sub.id)}
-                        disabled={deletingId !== null}
-                        style={{
-                          padding: '0.375rem 0.75rem',
-                          fontSize: '0.875rem',
-                          fontWeight: '500',
-                          backgroundColor: '#dc2626',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '0.375rem',
-                          cursor: deletingId !== null ? 'not-allowed' : 'pointer',
-                          opacity: deletingId !== null ? 0.5 : 1,
-                          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                          width: '100%',
-                        }}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </td>
+        <div className="card overflow-hidden p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse min-w-[1200px]">
+              <thead>
+                <tr className="border-b-2 border-gray-200 bg-gray-50">
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Submitted By</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Original Notes</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">AI Post</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Feedback</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRO Edits</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Approval</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sticky right-0 bg-gray-50 z-10">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {submissions.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-4 py-12 text-center text-gray-500">
+                      No submissions found
+                    </td>
+                  </tr>
+                ) : (
+                  submissions.map((sub) => (
+                    <tr key={sub.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-gray-700">
+                        {new Date(sub.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700">{sub.submittedByEmail}</td>
+                      <td className="px-4 py-3 text-sm">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {sub.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm max-w-[200px]">
+                        <button
+                          onClick={() => setNotesModal({ isOpen: true, content: sub.notes })}
+                          className="text-blue-600 hover:text-blue-800 underline text-left w-full truncate block"
+                          title="Click to view full notes"
+                        >
+                          {sub.notes.substring(0, 100)}
+                          {sub.notes.length > 100 && '...'}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 text-sm max-w-[200px]">
+                        {sub.finalPostText ? (
+                          <button
+                            onClick={() => setAiPostModal({ isOpen: true, content: sub.finalPostText })}
+                            className="text-blue-600 hover:text-blue-800 underline text-left w-full truncate block"
+                            title="Click to view full AI post"
+                          >
+                            {sub.finalPostText.substring(0, 100)}
+                            {sub.finalPostText.length > 100 && '...'}
+                          </button>
+                        ) : (
+                          <span className="text-gray-400">N/A</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {sub.feedback.length > 0 ? (
+                          <button
+                            onClick={() => setFeedbackModal({ isOpen: true, entries: sub.feedback })}
+                            className="text-blue-600 hover:text-blue-800 underline"
+                            title="Click to view all feedback"
+                          >
+                            {sub.feedback.length} {sub.feedback.length === 1 ? 'entry' : 'entries'}
+                          </button>
+                        ) : (
+                          <span className="text-gray-400">None</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-700">
+                        {sub.editedByPro ? (
+                          <span className="text-green-600 font-medium">Yes</span>
+                        ) : (
+                          <span className="text-gray-400">No</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        {sub.leaderApprovals.length > 0 ? (
+                          sub.leaderApprovals[0].approved ? (
+                            <span className="text-green-600 font-medium">✓ Approved</span>
+                          ) : (
+                            <span className="text-red-600">
+                              ✗ Rejected{sub.leaderApprovals[0].comment ? `: ${sub.leaderApprovals[0].comment}` : ''}
+                            </span>
+                          )
+                        ) : (
+                          <span className="text-gray-400">N/A</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm sticky right-0 bg-white z-5 min-w-[120px]">
+                        {deleteConfirmId === sub.id ? (
+                          <div className="flex gap-2 items-center flex-wrap">
+                            <span className="text-xs text-red-600 font-medium">Confirm?</span>
+                            <button
+                              onClick={() => deleteSubmission(sub.id)}
+                              disabled={deletingId === sub.id}
+                              className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              {deletingId === sub.id ? (
+                                <>
+                                  <Loader2 className="inline-block mr-1 h-3 w-3 animate-spin" />
+                                  Deleting...
+                                </>
+                              ) : (
+                                'Yes'
+                              )}
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirmId(null)}
+                              disabled={deletingId === sub.id}
+                              className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md disabled:opacity-50 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setDeleteConfirmId(sub.id)}
+                            disabled={deletingId !== null}
+                            className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center text-xs text-gray-600">
+          <p>Patcher is a service from Donegal Mountain Rescue Team</p>
         </div>
       </div>
+
+      {/* Modals */}
+      <ContentModal
+        isOpen={notesModal.isOpen}
+        onClose={() => setNotesModal({ isOpen: false, content: null })}
+        title="Original Notes"
+        content={notesModal.content}
+        type="notes"
+      />
+      
+      <ContentModal
+        isOpen={aiPostModal.isOpen}
+        onClose={() => setAiPostModal({ isOpen: false, content: null })}
+        title="AI Generated Post"
+        content={aiPostModal.content}
+        type="ai-post"
+      />
+      
+      <ContentModal
+        isOpen={feedbackModal.isOpen}
+        onClose={() => setFeedbackModal({ isOpen: false, entries: [] })}
+        title="Feedback History"
+        content={null}
+        type="feedback"
+        feedbackEntries={feedbackModal.entries}
+      />
     </div>
   )
 }
