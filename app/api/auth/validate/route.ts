@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { validateAuthCode } from '@/lib/auth'
 import { createSession } from '@/lib/session'
 import { rateLimitByIP } from '@/lib/rate-limit'
+import { logAudit, logError } from '@/lib/logtail'
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,6 +38,16 @@ export async function POST(request: NextRequest) {
     const validation = await validateAuthCode(code, role)
 
     if (!validation.valid) {
+      // Log failed authentication attempt
+      await logAudit('Authentication failed - invalid or expired code', {
+        component: 'authentication',
+        actionType: 'authenticate',
+        userRole: role,
+        success: false,
+        ip,
+        reason: 'invalid_code',
+      })
+      
       return NextResponse.json({ error: 'Invalid or expired code' }, { status: 401 })
     }
 
@@ -47,6 +58,17 @@ export async function POST(request: NextRequest) {
       submissionId: validation.submissionId,
     })
 
+    // Log successful authentication
+    await logAudit('User authenticated successfully', {
+      component: 'authentication',
+      actionType: 'authenticate',
+      userEmail: validation.email!,
+      userRole: validation.role!,
+      success: true,
+      ip,
+      hasSubmissionId: !!validation.submissionId,
+    })
+
     return NextResponse.json({
       valid: true,
       email: validation.email,
@@ -55,6 +77,10 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error validating auth code:', error)
+    await logError('Error validating auth code', {
+      component: 'authentication',
+      error: error instanceof Error ? error : new Error(String(error)),
+    })
     return NextResponse.json({ error: 'Failed to validate code' }, { status: 500 })
   }
 }

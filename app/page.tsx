@@ -183,6 +183,7 @@ export default function HomePage() {
 
     setRegenerating(true)
     setError('')
+    setSuccess('')
 
     try {
       const response = await fetch('/api/submissions/regenerate', {
@@ -197,6 +198,11 @@ export default function HomePage() {
       const data = await response.json()
 
       if (!response.ok) {
+        // Handle rate limiting with user-friendly message
+        if (response.status === 429 && data.code === 'RATE_LIMIT_EXCEEDED') {
+          setError('Please wait a moment before regenerating again.')
+          return
+        }
         throw new Error(data.error || 'Failed to regenerate post')
       }
 

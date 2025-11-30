@@ -3,6 +3,7 @@ import { createAuthCode, validateEmailForRole } from '@/lib/auth'
 import { sendMagicLink } from '@/lib/resend'
 import { Role } from '@prisma/client'
 import { rateLimitByIP, rateLimitByIdentifier } from '@/lib/rate-limit'
+import { logAudit, logError } from '@/lib/logtail'
 
 export async function POST(request: NextRequest) {
   try {
@@ -111,6 +112,16 @@ export async function POST(request: NextRequest) {
     }
     
     if (!isValid) {
+      // Log unauthorized email attempt
+      await logAudit('Magic link request failed - unauthorized email', {
+        component: 'authentication',
+        actionType: 'authenticate',
+        userRole: validRole,
+        success: false,
+        ip,
+        reason: 'unauthorized_email',
+      })
+      
       return NextResponse.json({ 
         error: 'Email not authorised. If you think this is wrong reach out to Public Relations Officer.',
         code: 'UNAUTHORIZED_EMAIL'
@@ -123,22 +134,44 @@ export async function POST(request: NextRequest) {
       code = await createAuthCode(email, validRole)
     } catch (dbError: any) {
       console.error('Database error creating auth code:', dbError)
+      await logError('Database error creating auth code', {
+        component: 'authentication',
+        error: dbError instanceof Error ? dbError : new Error(String(dbError)),
+        userEmail: email,
+        userRole: validRole,
+      })
       return NextResponse.json({ 
         error: 'Failed to create authentication code',
         code: 'DATABASE_ERROR',
-        details: dbError?.message || 'Unknown database error'
+        ...(process.env.NODE_ENV === 'development' && { details: dbError?.message || 'Unknown database error' })
       }, { status: 500 })
     }
 
     // Send magic link
     try {
       await sendMagicLink(email, validRole, code)
+      
+      // Log successful magic link sent
+      await logAudit('Magic link sent', {
+        component: 'authentication',
+        actionType: 'authenticate',
+        userEmail: email,
+        userRole: validRole,
+        success: true,
+        ip,
+      })
     } catch (emailError: any) {
       console.error('Email sending error:', emailError)
+      await logError('Failed to send magic link email', {
+        component: 'authentication',
+        error: emailError instanceof Error ? emailError : new Error(String(emailError)),
+        userEmail: email,
+        userRole: validRole,
+      })
       return NextResponse.json({ 
         error: 'Failed to send email',
         code: 'EMAIL_ERROR',
-        details: emailError?.message || 'Unknown email error'
+        ...(process.env.NODE_ENV === 'development' && { details: emailError?.message || 'Unknown email error' })
       }, { status: 500 })
     }
 
@@ -158,10 +191,15 @@ export async function POST(request: NextRequest) {
       console.error('Error sending auth link:', errorMessage)
     }
     
+    await logError('Unexpected error sending auth link', {
+      component: 'authentication',
+      error: error instanceof Error ? error : new Error(String(error)),
+    })
+    
     return NextResponse.json({ 
       error: 'Failed to send auth link',
       code: 'UNEXPECTED_ERROR',
-      details: errorMessage
+      ...(process.env.NODE_ENV === 'development' && { details: errorMessage })
     }, { status: 500 })
   }
 }

@@ -3,6 +3,7 @@ import { compare } from 'bcryptjs'
 import { createSession } from '@/lib/session'
 import { rateLimitByIP } from '@/lib/rate-limit'
 import { checkBotId } from '@/lib/botid'
+import { logAudit, logError } from '@/lib/logtail'
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,6 +81,18 @@ export async function POST(request: NextRequest) {
       if (process.env.NODE_ENV === 'production') {
         console.warn(`🚫 Failed password login attempt - IP: ${ip}`)
       }
+      
+      // Log failed authentication attempt
+      await logAudit('Password login failed - invalid password', {
+        component: 'authentication',
+        actionType: 'authenticate',
+        userEmail: proEmail,
+        userRole: 'pro',
+        success: false,
+        ip,
+        reason: 'invalid_password',
+      })
+      
       return NextResponse.json({ 
         error: 'Invalid password',
         code: 'INVALID_PASSWORD'
@@ -92,6 +105,16 @@ export async function POST(request: NextRequest) {
       role: 'pro',
     })
 
+    // Log successful authentication
+    await logAudit('Password login successful', {
+      component: 'authentication',
+      actionType: 'authenticate',
+      userEmail: proEmail,
+      userRole: 'pro',
+      success: true,
+      ip,
+    })
+
     return NextResponse.json({
       success: true,
       email: proEmail,
@@ -99,6 +122,10 @@ export async function POST(request: NextRequest) {
     })
   } catch (error: any) {
     console.error('Error in password login:', error)
+    await logError('Error in password login', {
+      component: 'authentication',
+      error: error instanceof Error ? error : new Error(String(error)),
+    })
     return NextResponse.json({ 
       error: 'Failed to authenticate',
       code: 'AUTH_ERROR'

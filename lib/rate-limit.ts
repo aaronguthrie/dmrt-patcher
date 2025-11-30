@@ -1,6 +1,7 @@
 // Rate limiting utility - supports multiple backends
 // Priority: Neon PostgreSQL > Upstash Redis > In-memory (dev only)
 // Note: Vercel KV was replaced with Marketplace Storage integrations (June 2025)
+import { logError, logWarning } from './logtail'
 
 interface RateLimitResult {
   success: boolean
@@ -377,10 +378,23 @@ export async function rateLimitByIP(
     const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
     
     if (!hasPostgres && !hasRedis) {
-      // Log critical security warning
-      console.error('🚨 CRITICAL SECURITY WARNING: Rate limiting using in-memory fallback in production!')
-      console.error('🚨 This will NOT work effectively in serverless environments!')
-      console.error('🚨 Please configure POSTGRES_URL (Neon) or UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN (Upstash)')
+      // Log critical security warning with monitoring details
+      const timestamp = new Date().toISOString()
+      console.error(`🚨 [${timestamp}] CRITICAL SECURITY WARNING: Rate limiting using in-memory fallback in production!`)
+      console.error(`🚨 [${timestamp}] This will NOT work effectively in serverless environments!`)
+      console.error(`🚨 [${timestamp}] Please configure POSTGRES_URL (Neon) or UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN (Upstash)`)
+      console.error(`🚨 [${timestamp}] Environment check - POSTGRES_URL: ${hasPostgres ? 'SET' : 'MISSING'}, Redis: ${hasRedis ? 'SET' : 'MISSING'}`)
+      
+      // Send critical alert to Better Stack
+      await logError('Rate limiting backend not configured - using in-memory fallback', {
+        severity: 'critical',
+        component: 'rate-limiting',
+        issue: 'backend-missing',
+        hasPostgres,
+        hasRedis,
+        environment: process.env.NODE_ENV,
+        timestamp,
+      })
       
       // In production, fail closed - block requests if rate limiting backend is not configured
       // This prevents unlimited requests when rate limiting is broken
@@ -400,6 +414,17 @@ export async function rateLimitByIP(
     // Log rate limit violations for security monitoring
     if (!result.success) {
       console.warn(`⚠️ Rate limit exceeded for IP: ${ip} (limit: ${result.limit}, remaining: ${result.remaining})`)
+      
+      // Log to Better Stack for analysis (use warning level to avoid spam)
+      const shouldMask = process.env.MASK_AUDIT_DATA !== 'false'
+      await logWarning('Rate limit exceeded', {
+        component: 'rate-limiting',
+        type: 'ip-limit',
+        ip: shouldMask ? ip.substring(0, 8) + '***' : ip,
+        limit: result.limit,
+        remaining: result.remaining,
+        resetTime: new Date(result.reset).toISOString(),
+      })
     }
     
     return result
@@ -410,7 +435,28 @@ export async function rateLimitByIP(
     // Fail closed in production - block request if rate limiting fails
     // This prevents bypass when rate limiting backend is down
     if (process.env.NODE_ENV === 'production') {
-      console.error('🚨 Rate limiting backend error - blocking request for security')
+      const timestamp = new Date().toISOString()
+      const hasPostgres = !!process.env.POSTGRES_URL
+      const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+      
+      console.error(`🚨 [${timestamp}] Rate limiting backend error - blocking request for security`)
+      console.error(`🚨 [${timestamp}] Error details: ${error?.message || 'Unknown error'}`)
+      console.error(`🚨 [${timestamp}] IP: ${ip}`)
+      
+      // Send critical error to Better Stack
+      const shouldMask = process.env.MASK_AUDIT_DATA !== 'false'
+      await logError('Rate limiting backend error - blocking request for security', {
+        severity: 'critical',
+        component: 'rate-limiting',
+        issue: 'backend-error',
+        error: error,
+        ip: shouldMask ? ip.substring(0, 8) + '***' : ip,
+        backend: hasPostgres ? 'postgres' : hasRedis ? 'redis' : 'none',
+        maxRequests,
+        windowMs,
+        timestamp,
+      })
+      
       return {
         success: false,
         limit: maxRequests,
@@ -470,6 +516,18 @@ export async function rateLimitByIdentifier(
         ? `${identifier.substring(0, 2)}***${identifier.substring(identifier.length - 2)}`
         : '***'
       console.warn(`⚠️ Rate limit exceeded for identifier: ${maskedId} (limit: ${result.limit}, remaining: ${result.remaining})`)
+      
+      // Log to Better Stack for analysis (use warning level to avoid spam)
+      const shouldMask = process.env.MASK_AUDIT_DATA !== 'false'
+      const loggedId = shouldMask ? maskedId : identifier
+      await logWarning('Rate limit exceeded', {
+        component: 'rate-limiting',
+        type: 'identifier-limit',
+        identifier: loggedId,
+        limit: result.limit,
+        remaining: result.remaining,
+        resetTime: new Date(result.reset).toISOString(),
+      })
     }
     
     return result
@@ -479,7 +537,26 @@ export async function rateLimitByIdentifier(
     
     // Fail closed in production - block request if rate limiting fails
     if (process.env.NODE_ENV === 'production') {
-      console.error('🚨 Rate limiting backend error - blocking request for security')
+      const timestamp = new Date().toISOString()
+      const hasPostgres = !!process.env.POSTGRES_URL
+      const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+      
+      console.error(`🚨 [${timestamp}] Rate limiting backend error - blocking request for security`)
+      console.error(`🚨 [${timestamp}] Error details: ${error?.message || 'Unknown error'}`)
+      
+      // Send critical error to Better Stack
+      // Note: No IP/identifier in this context, so no masking needed
+      await logError('Rate limiting backend error - blocking request for security', {
+        severity: 'critical',
+        component: 'rate-limiting',
+        issue: 'backend-error',
+        error: error,
+        backend: hasPostgres ? 'postgres' : hasRedis ? 'redis' : 'none',
+        maxRequests,
+        windowMs,
+        timestamp,
+      })
+      
       return {
         success: false,
         limit: maxRequests,

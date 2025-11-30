@@ -1,3 +1,5 @@
+import { validatePhotoUrl } from './validation'
+
 export async function postToFacebook(postText: string, photoUrls: string[]): Promise<{ id: string }> {
   const pageId = process.env.FACEBOOK_PAGE_ID!
   const accessToken = process.env.META_ACCESS_TOKEN!
@@ -14,12 +16,18 @@ export async function postToFacebook(postText: string, photoUrls: string[]): Pro
 
     if (!response.ok) {
       const error = await response.json()
-      throw new Error(`Facebook API error: ${JSON.stringify(error)}`)
+      // Sanitize error message to prevent information disclosure
+      throw new Error('Failed to post to Facebook')
     }
 
     return response.json()
   } else {
     // With photo(s) - use first photo
+    // Validate photo URL to prevent SSRF
+    if (!validatePhotoUrl(photoUrls[0])) {
+      throw new Error('Invalid photo URL')
+    }
+    
     const response = await fetch(`https://graph.facebook.com/v18.0/${pageId}/photos`, {
       method: 'POST',
       body: new URLSearchParams({
@@ -31,7 +39,8 @@ export async function postToFacebook(postText: string, photoUrls: string[]): Pro
 
     if (!response.ok) {
       const error = await response.json()
-      throw new Error(`Facebook API error: ${JSON.stringify(error)}`)
+      // Sanitize error message to prevent information disclosure
+      throw new Error('Failed to post to Facebook')
     }
 
     return response.json()
@@ -41,6 +50,11 @@ export async function postToFacebook(postText: string, photoUrls: string[]): Pro
 export async function postToInstagram(postText: string, photoUrl: string): Promise<{ id: string }> {
   const accountId = process.env.INSTAGRAM_ACCOUNT_ID!
   const accessToken = process.env.META_ACCESS_TOKEN!
+
+  // Validate photo URL to prevent SSRF
+  if (!validatePhotoUrl(photoUrl)) {
+    throw new Error('Invalid photo URL')
+  }
 
   // Step 1: Create media container
   const containerResponse = await fetch(
@@ -57,7 +71,8 @@ export async function postToInstagram(postText: string, photoUrl: string): Promi
 
   if (!containerResponse.ok) {
     const error = await containerResponse.json()
-    throw new Error(`Instagram API error (container): ${JSON.stringify(error)}`)
+    // Sanitize error message to prevent information disclosure
+    throw new Error('Failed to post to Instagram')
   }
 
   const containerData = await containerResponse.json()
@@ -77,7 +92,8 @@ export async function postToInstagram(postText: string, photoUrl: string): Promi
 
   if (!publishResponse.ok) {
     const error = await publishResponse.json()
-    throw new Error(`Instagram API error (publish): ${JSON.stringify(error)}`)
+    // Sanitize error message to prevent information disclosure
+    throw new Error('Failed to post to Instagram')
   }
 
   return publishResponse.json()

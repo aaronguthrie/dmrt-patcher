@@ -5,6 +5,7 @@ import { generatePost } from '@/lib/gemini'
 import { checkBotId } from '@/lib/botid'
 import { validateFile, validateNotesLength, sanitizeForAI } from '@/lib/validation'
 import { requireAuth } from '@/lib/auth-middleware'
+import { logAudit, logError } from '@/lib/logtail'
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,7 +75,18 @@ export async function POST(request: NextRequest) {
     })
 
     // Generate initial post with sanitized notes
-    const generatedPost = await generatePost(sanitizedNotes)
+    let generatedPost: string
+    try {
+      generatedPost = await generatePost(sanitizedNotes)
+    } catch (aiError) {
+      await logError('Failed to generate post with AI', {
+        component: 'submission',
+        error: aiError instanceof Error ? aiError : new Error(String(aiError)),
+        submissionId: submission.id,
+        userEmail: email,
+      })
+      throw aiError
+    }
 
     // Update submission with generated post
     const updatedSubmission = await prisma.submission.update({
@@ -82,6 +94,21 @@ export async function POST(request: NextRequest) {
       data: {
         finalPostText: generatedPost,
       },
+    })
+
+    // Log successful submission creation
+    const ip = request.ip ?? request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
+    await logAudit('Submission created', {
+      component: 'submission',
+      actionType: 'create',
+      userEmail: email,
+      userRole: session.role,
+      resourceId: updatedSubmission.id,
+      resourceType: 'submission',
+      success: true,
+      ip,
+      photoCount: photoPaths.length,
+      notesLength: sanitizedNotes.length,
     })
 
     return NextResponse.json({
@@ -93,6 +120,10 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Error creating submission:', error)
+    await logError('Error creating submission', {
+      component: 'submission',
+      error: error instanceof Error ? error : new Error(String(error)),
+    })
     return NextResponse.json({ error: 'Failed to create submission' }, { status: 500 })
   }
 }

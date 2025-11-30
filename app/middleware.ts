@@ -97,10 +97,14 @@ export function middleware(request: NextRequest) {
   // Content Security Policy - prevents XSS attacks
   // Only apply CSP to non-API routes (API routes don't serve HTML)
   if (!isApiRoute) {
-    response.headers.set(
-      'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.resend.com https://generativelanguage.googleapis.com https://graph.facebook.com https://graph.instagram.com; frame-ancestors 'none';"
-    )
+    // In production, use stricter CSP (Next.js may require unsafe-inline for some features)
+    // In development, allow unsafe-eval for hot reloading
+    const isProduction = process.env.NODE_ENV === 'production'
+    const csp = isProduction
+      ? "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.resend.com https://generativelanguage.googleapis.com https://graph.facebook.com https://graph.instagram.com; frame-ancestors 'none';"
+      : "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.resend.com https://generativelanguage.googleapis.com https://graph.facebook.com https://graph.instagram.com; frame-ancestors 'none';"
+    
+    response.headers.set('Content-Security-Policy', csp)
   }
   
   // Permissions Policy - disable unused browser features
