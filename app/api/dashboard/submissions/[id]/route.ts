@@ -9,11 +9,17 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Block bots using BotID (advanced ML-based detection)
-    const { isBot } = await checkBotId()
-    if (isBot) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    // Require session authentication first (authenticated users are trusted)
+    const authCheck = await requireAuth(request)
+    if (authCheck instanceof NextResponse) {
+      // Only check for bots if not authenticated (prevents false positives for authenticated users)
+      const { isBot } = await checkBotId()
+      if (isBot) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+      }
+      return authCheck
     }
+    const session = authCheck
 
     // Stricter rate limiting for deletions (prevent mass deletion)
     const ip = request.ip ?? request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
@@ -32,13 +38,6 @@ export async function DELETE(
         }
       )
     }
-
-    // Require session authentication (dashboard auth now creates a session)
-    const authCheck = await requireAuth(request)
-    if (authCheck instanceof NextResponse) {
-      return authCheck
-    }
-    const session = authCheck
 
     const submissionId = params.id
 
