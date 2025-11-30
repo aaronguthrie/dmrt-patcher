@@ -64,18 +64,26 @@ export async function logError(
 
   const { error, severity = 'error', component, ...extra } = context
 
-  // Fire-and-forget: don't block the request on logging
-  // Logtail batches logs internally, so this is safe
-  logtail.error(message, {
+  // Logtail batches logs, but in serverless we need to ensure they're sent
+  // Use a short await with timeout to balance performance and reliability
+  const logData = {
     severity,
     component: component || 'unknown',
     error: error instanceof Error ? error.message : error,
     errorStack: error instanceof Error ? error.stack : undefined,
     timestamp: new Date().toISOString(),
     ...extra,
-  }).catch((err) => {
-    // Fail silently - don't break the app if logging fails
+  }
+  
+  // In serverless, we need to ensure logs are sent before function terminates
+  // Use Promise.race with a short timeout to avoid blocking too long
+  Promise.race([
+    logtail.error(message, logData),
+    new Promise((resolve) => setTimeout(() => resolve(null), 200)) // 200ms max wait
+  ]).catch((err) => {
     console.error('Failed to send log to Better Stack:', err)
+    // Also log to console as fallback
+    console.error(`[Better Stack Error] ${message}`, logData)
   })
 }
 
@@ -96,14 +104,18 @@ export async function logWarning(
 
   const { component, ...extra } = context
 
-  // Fire-and-forget: don't block the request on logging
-  logtail.warn(message, {
+  // Logtail batches logs, but in serverless we need to ensure they're sent
+  const logData = {
     severity: 'warning',
     component: component || 'unknown',
     timestamp: new Date().toISOString(),
     ...extra,
-  }).catch((err) => {
-    // Fail silently - don't break the app if logging fails
+  }
+  
+  Promise.race([
+    logtail.warn(message, logData),
+    new Promise((resolve) => setTimeout(() => resolve(null), 200)) // 200ms max wait
+  ]).catch((err) => {
     console.error('Failed to send log to Better Stack:', err)
   })
 }
@@ -125,14 +137,18 @@ export async function logInfo(
 
   const { component, ...extra } = context
 
-  // Fire-and-forget: don't block the request on logging
-  logtail.info(message, {
+  // Logtail batches logs, but in serverless we need to ensure they're sent
+  const logData = {
     severity: 'info',
     component: component || 'unknown',
     timestamp: new Date().toISOString(),
     ...extra,
-  }).catch((err) => {
-    // Fail silently - don't break the app if logging fails
+  }
+  
+  Promise.race([
+    logtail.info(message, logData),
+    new Promise((resolve) => setTimeout(() => resolve(null), 200)) // 200ms max wait
+  ]).catch((err) => {
     console.error('Failed to send log to Better Stack:', err)
   })
 }
@@ -193,9 +209,9 @@ export async function logAudit(
         : ip)
     : undefined
 
-  // Fire-and-forget: don't block the request on logging
-  // This is critical for performance - audit logs should not slow down requests
-  logtail.info(`AUDIT: ${action}`, {
+  // Logtail batches logs, but in serverless we need to ensure they're sent
+  // Use a short await with timeout to balance performance and reliability
+  const logData = {
     severity: 'info',
     component: component || 'audit',
     audit: true,
@@ -209,9 +225,17 @@ export async function logAudit(
     success,
     timestamp: new Date().toISOString(),
     ...extra,
-  }).catch((err) => {
-    // Fail silently - don't break the app if logging fails
+  }
+  
+  // In serverless, we need to ensure logs are sent before function terminates
+  // Use Promise.race with a short timeout to avoid blocking too long
+  Promise.race([
+    logtail.info(`AUDIT: ${action}`, logData),
+    new Promise((resolve) => setTimeout(() => resolve(null), 200)) // 200ms max wait
+  ]).catch((err) => {
     console.error('Failed to send audit log to Better Stack:', err)
+    // Also log to console as fallback
+    console.log(`[Better Stack Error] AUDIT: ${action}`, logData)
   })
 }
 
