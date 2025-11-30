@@ -175,19 +175,20 @@ class NeonPostgreSQLRateLimiter implements RateLimiter {
       `
 
       // Get or create rate limit record
+      // Use table-qualified column names to avoid ambiguity in ON CONFLICT clause
       const result = await this.prisma.$queryRaw`
         INSERT INTO rate_limits (identifier, count, reset_at, created_at)
         VALUES (${identifier}, 1, ${resetAt}, ${now})
         ON CONFLICT (identifier) 
         DO UPDATE SET 
           count = CASE 
-            WHEN reset_at < ${now} THEN 1
-            WHEN count >= ${this.maxRequests} THEN count
-            ELSE count + 1
+            WHEN rate_limits.reset_at < ${now} THEN 1
+            WHEN rate_limits.count >= ${this.maxRequests} THEN rate_limits.count
+            ELSE rate_limits.count + 1
           END,
           reset_at = CASE 
-            WHEN reset_at < ${now} THEN ${resetAt}
-            ELSE reset_at
+            WHEN rate_limits.reset_at < ${now} THEN ${resetAt}
+            ELSE rate_limits.reset_at
           END
         RETURNING count, reset_at
       `
