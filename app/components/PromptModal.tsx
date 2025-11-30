@@ -21,14 +21,14 @@ export default function PromptModal({ isOpen, onClose }: PromptModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-black text-white p-6 flex items-center justify-between">
+        <div className="bg-white border-b border-gray-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <FileText className="h-6 w-6" />
-            <h2 className="text-2xl font-bold">AI System Prompt</h2>
+            <FileText className="h-6 w-6 text-gray-700" />
+            <h2 className="text-2xl font-bold text-gray-900">AI System Prompt</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

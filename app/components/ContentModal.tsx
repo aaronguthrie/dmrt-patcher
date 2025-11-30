@@ -47,14 +47,16 @@ export default function ContentModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-black text-white p-6 flex items-center justify-between">
+        <div className="bg-white border-b border-gray-200 p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {getIcon()}
-            <h2 className="text-2xl font-bold">{title}</h2>
+            <div className="text-gray-700">
+              {getIcon()}
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-600 hover:text-gray-900"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

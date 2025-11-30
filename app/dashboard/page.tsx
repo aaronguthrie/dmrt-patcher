@@ -35,6 +35,7 @@ export default function DashboardPage() {
   const [error, setError] = useState('')
 
   const [submissions, setSubmissions] = useState<Submission[]>([])
+  const [loadingSubmissions, setLoadingSubmissions] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -81,6 +82,7 @@ export default function DashboardPage() {
   }
 
   const loadSubmissions = async () => {
+    setLoadingSubmissions(true)
     try {
       const params = new URLSearchParams()
       if (search) params.append('search', search)
@@ -100,6 +102,9 @@ export default function DashboardPage() {
       }
     } catch (err) {
       console.error('Error loading submissions:', err)
+      setError('Failed to load submissions')
+    } finally {
+      setLoadingSubmissions(false)
     }
   }
 
@@ -260,29 +265,40 @@ export default function DashboardPage() {
         </div>
 
         <div className="card overflow-hidden p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-[1200px]">
-              <thead>
-                <tr className="border-b-2 border-gray-200 bg-gray-50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Submitted By</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Original Notes</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">AI Post</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Feedback</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRO Edits</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Approval</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sticky right-0 bg-gray-50 z-10">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {submissions.length === 0 ? (
-                  <tr>
-                    <td colSpan={9} className="px-4 py-12 text-center text-gray-500">
-                      No submissions found
-                    </td>
+          {loadingSubmissions ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="relative mb-4">
+                <div className="absolute inset-0 rounded-full bg-black/10 animate-ping"></div>
+                <div className="relative rounded-full bg-black/5 p-4">
+                  <Loader2 className="h-8 w-8 text-black animate-spin" />
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">Loading submissions...</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse min-w-[1200px]">
+                <thead>
+                  <tr className="border-b-2 border-gray-200 bg-gray-50">
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Submitted By</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Original Notes</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">AI Post</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Feedback</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRO Edits</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Approval</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider sticky right-0 bg-gray-50 z-10">Actions</th>
                   </tr>
-                ) : (
+                </thead>
+                <tbody>
+                  {submissions.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-12 text-center text-gray-500">
+                        No submissions found
+                      </td>
+                    </tr>
+                  ) : (
                   submissions.map((sub) => (
                     <tr key={sub.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3 text-sm text-gray-700">
@@ -390,9 +406,10 @@ export default function DashboardPage() {
                     </tr>
                   ))
                 )}
-              </tbody>
-            </table>
-          </div>
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         <div className="mt-6 text-center text-xs text-gray-600">
