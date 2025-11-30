@@ -10,6 +10,10 @@ let logtailInstance: Logtail | null = null
 export function getLogtail(): Logtail | null {
   // Only use in production
   if (process.env.NODE_ENV !== 'production') {
+    // Log once in production to help debug
+    if (!logtailInstance && process.env.VERCEL) {
+      console.warn('⚠️ Logtail: NODE_ENV is not "production". Logging disabled.')
+    }
     return null
   }
 
@@ -21,14 +25,18 @@ export function getLogtail(): Logtail | null {
   // Create new instance if token is provided
   const token = process.env.LOGTAIL_SOURCE_TOKEN
   if (!token) {
+    // Log once to help debug missing token
+    console.warn('⚠️ Logtail: LOGTAIL_SOURCE_TOKEN not set. Logging disabled.')
+    console.warn('⚠️ To enable logging, add LOGTAIL_SOURCE_TOKEN to your environment variables.')
     return null
   }
 
   try {
     logtailInstance = new Logtail(token)
+    console.log('✅ Logtail initialized successfully')
     return logtailInstance
   } catch (error) {
-    console.error('Failed to initialize Logtail:', error)
+    console.error('❌ Failed to initialize Logtail:', error)
     return null
   }
 }
@@ -47,6 +55,10 @@ export async function logError(
 ) {
   const logtail = getLogtail()
   if (!logtail) {
+    // In production, also log to console for debugging
+    if (process.env.NODE_ENV === 'production') {
+      console.error(`[Logtail Disabled] ${message}`, context)
+    }
     return
   }
 
@@ -145,6 +157,10 @@ export async function logAudit(
 ) {
   const logtail = getLogtail()
   if (!logtail) {
+    // In production, also log to console for debugging
+    if (process.env.NODE_ENV === 'production') {
+      console.log(`[Logtail Disabled] AUDIT: ${action}`, context)
+    }
     return
   }
 
