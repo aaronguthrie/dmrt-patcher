@@ -415,9 +415,9 @@ export async function rateLimitByIP(
     if (!result.success) {
       console.warn(`⚠️ Rate limit exceeded for IP: ${ip} (limit: ${result.limit}, remaining: ${result.remaining})`)
       
-      // Log to Better Stack for analysis (use warning level to avoid spam)
+      // Log to Better Stack for analysis (fire-and-forget)
       const shouldMask = process.env.MASK_AUDIT_DATA !== 'false'
-      await logWarning('Rate limit exceeded', {
+      logWarning('Rate limit exceeded', {
         component: 'rate-limiting',
         type: 'ip-limit',
         ip: shouldMask ? ip.substring(0, 8) + '***' : ip,
