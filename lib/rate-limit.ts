@@ -319,7 +319,10 @@ export function getRateLimiter(
     try {
       const { prisma } = require('./db')
       rateLimiterInstance = new NeonPostgreSQLRateLimiter(prisma, maxRequests, windowMs)
-      console.log('✅ Using Neon PostgreSQL for rate limiting')
+      // Only log in development or if explicitly enabled (reduces noise in production logs)
+      if (process.env.NODE_ENV !== 'production' || process.env.LOG_RATE_LIMITER_INIT === 'true') {
+        console.log('✅ Using Neon PostgreSQL for rate limiting')
+      }
       return rateLimiterInstance
     } catch (error) {
       console.warn('Neon PostgreSQL not available for rate limiting, trying Upstash Redis...')
@@ -344,7 +347,10 @@ export function getRateLimiter(
         token: process.env.UPSTASH_REDIS_REST_TOKEN,
       })
       rateLimiterInstance = new UpstashRedisRateLimiter(redis, maxRequests, windowMs)
-      console.log('✅ Using Upstash Redis for rate limiting')
+      // Only log in development or if explicitly enabled (reduces noise in production logs)
+      if (process.env.NODE_ENV !== 'production' || process.env.LOG_RATE_LIMITER_INIT === 'true') {
+        console.log('✅ Using Upstash Redis for rate limiting')
+      }
       return rateLimiterInstance
     } catch (error) {
       console.warn('Upstash Redis not available, using in-memory (dev only)...')
